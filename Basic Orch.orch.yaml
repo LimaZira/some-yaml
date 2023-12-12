@@ -1,0 +1,39 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "And"
+      parameters:
+        componentName: "Start"
+    And:
+      type: "and"
+      transitions:
+        unconditional:
+        - "End Success"
+      parameters:
+        componentName: "And"
+    End Success:
+      type: "end-success"
+      parameters:
+        componentName: "End Success"
+design:
+  components:
+    Start:
+      position:
+        x: -50
+        "y": -30
+      tempMetlId: 1
+    And:
+      position:
+        x: 120
+        "y": -30
+      tempMetlId: 2
+    End Success:
+      position:
+        x: 270
+        "y": -30
+      tempMetlId: 3
