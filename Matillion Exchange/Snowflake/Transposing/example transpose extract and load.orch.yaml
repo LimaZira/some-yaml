@@ -1,0 +1,123 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Recreate stg_batteryelectric_wide"
+      parameters:
+        componentName: "Start"
+    Recreate stg_batteryelectric_wide:
+      type: "create-table"
+      transitions:
+        success:
+        - "Prepare column list"
+      parameters:
+        componentName: "Recreate stg_batteryelectric_wide"
+        createReplace: "Create if not exists"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        newTableName: "stg_batteryelectric_wide"
+        tableType: "Permanent"
+        columns:
+        - - "Make"
+          - "VARCHAR"
+          - "40"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "Model"
+          - "VARCHAR"
+          - "256"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "2022 Q3"
+          - "VARCHAR"
+          - "20"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+    Prepare column list:
+      type: "query-to-scalar"
+      transitions:
+        success:
+        - "Print Variables"
+      parameters:
+        componentName: "Prepare column list"
+        mode: "Advanced"
+        query: "SELECT ARRAY_TO_STRING(ARRAY_AGG('\"' || COLUMN_NAME || '\"') WITHIN\
+          \ GROUP (ORDER BY ORDINAL_POSITION ASC), ',') AS QCOLS\r\nFROM INFORMATION_SCHEMA.COLUMNS\r\
+          \nWHERE TABLE_NAME = 'stg_batteryelectric_wide'\r\nAND COLUMN_NAME LIKE\
+          \ '%Q%'"
+        scalarVariableMapping:
+        - - "prvt_cols_dq"
+          - "QCOLS"
+    Print Variables:
+      type: "print-variables"
+      transitions:
+        success:
+        - "Run example transpose transformation 1 wide to narrow"
+      parameters:
+        componentName: "Print Variables"
+        variablesToPrint:
+        - - "prvt_cols_dq"
+        prefixText:
+        includeVariableName: "No"
+    Run example transpose transformation 1 wide to narrow:
+      type: "run-transformation"
+      parameters:
+        componentName: "Run example transpose transformation 1 wide to narrow"
+        transformationJob: "Matillion Exchange/Transposing/example transpose transformation\
+          \ 1 wide to narrow"
+        setScalarVariables:
+        - - "jv_col_list"
+          - "${prvt_cols_dq}"
+  variables:
+    prvt_cols_dq:
+      metadata:
+        type: "TEXT"
+        description: ""
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: ""
+design:
+  components:
+    Start:
+      position:
+        x: -10
+        "y": 0
+      tempMetlId: 1
+    Recreate stg_batteryelectric_wide:
+      position:
+        x: 140
+        "y": 0
+      tempMetlId: 2
+    Prepare column list:
+      position:
+        x: 290
+        "y": 0
+      tempMetlId: 3
+    Print Variables:
+      position:
+        x: 440
+        "y": 0
+      tempMetlId: 4
+    Run example transpose transformation 1 wide to narrow:
+      position:
+        x: 620
+        "y": 0
+      tempMetlId: 5
