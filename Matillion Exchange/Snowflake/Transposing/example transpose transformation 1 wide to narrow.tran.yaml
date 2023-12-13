@@ -126,7 +126,8 @@ pipeline:
     jv_col_list:
       metadata:
         type: "TEXT"
-        description: "List of columns to unpivot"
+        description: "List of columns to unpivot, comma separated, enclosed in double\
+          \ quotes"
         scope: "COPIED"
         visibility: "PUBLIC"
       defaultValue: ""

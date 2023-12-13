@@ -451,13 +451,13 @@ pipeline:
         clusteringKeys:
         dataRetentionTimeInDays:
         comment:
-    Prepare column list:
+    Set prvt_cols_dq:
       type: "query-to-scalar"
       transitions:
         success:
-        - "Print Variables"
+        - "Set prvt_cols_sq"
       parameters:
-        componentName: "Prepare column list"
+        componentName: "Set prvt_cols_dq"
         mode: "Advanced"
         query: "SELECT ARRAY_TO_STRING(ARRAY_AGG('\"' || COLUMN_NAME || '\"') WITHIN\
           \ GROUP (ORDER BY ORDINAL_POSITION ASC), ',') AS QCOLS\r\nFROM INFORMATION_SCHEMA.COLUMNS\r\
@@ -475,10 +475,15 @@ pipeline:
         componentName: "Print Variables"
         variablesToPrint:
         - - "prvt_cols_dq"
+        - - "prvt_cols_sq"
+        - - "prvt_pivot_aliases"
         prefixText:
         includeVariableName: "No"
     Run example transpose transformation 1 wide to narrow:
       type: "run-transformation"
+      transitions:
+        success:
+        - "Run example transpose transformation 2 narrow to wide"
       parameters:
         componentName: "Run example transpose transformation 1 wide to narrow"
         transformationJob: "Matillion Exchange/Snowflake/Transposing/example transpose\
@@ -531,7 +536,7 @@ pipeline:
       type: "assert-table"
       transitions:
         success:
-        - "Prepare column list"
+        - "Set prvt_cols_dq"
       parameters:
         componentName: "Assert Table"
         database: "[Environment Default]"
@@ -541,11 +546,67 @@ pipeline:
         tableMetadata:
         rowCountComparisonType: "Equal To"
         rowCountValue: "116"
+    Run example transpose transformation 2 narrow to wide:
+      type: "run-transformation"
+      parameters:
+        componentName: "Run example transpose transformation 2 narrow to wide"
+        transformationJob: "Matillion Exchange/Snowflake/Transposing/example transpose\
+          \ transformation 2 narrow to wide"
+        setScalarVariables:
+        - - "jv_col_list"
+          - "${prvt_cols_sq}"
+        - - "jv_pivot_aliases"
+          - "${prvt_pivot_aliases}"
+    Set prvt_cols_sq:
+      type: "query-to-scalar"
+      transitions:
+        success:
+        - "Set prvt_pivot_aliases"
+      parameters:
+        componentName: "Set prvt_cols_sq"
+        mode: "Advanced"
+        query: "SELECT ARRAY_TO_STRING(ARRAY_AGG('''' || COLUMN_NAME || '''') WITHIN\
+          \ GROUP (ORDER BY ORDINAL_POSITION ASC), ',') AS QCOLS\r\nFROM INFORMATION_SCHEMA.COLUMNS\r\
+          \nWHERE TABLE_NAME = 'stg_batteryelectric_wide'\r\nAND COLUMN_NAME LIKE\
+          \ '%Q%'"
+        scalarVariableMapping:
+        - - "prvt_cols_sq"
+          - "QCOLS"
+    Set prvt_pivot_aliases:
+      type: "query-to-scalar"
+      transitions:
+        success:
+        - "Print Variables"
+      parameters:
+        componentName: "Set prvt_pivot_aliases"
+        mode: "Advanced"
+        query: "SELECT ARRAY_TO_STRING(ARRAY_AGG('COUNT_' || REPLACE(UPPER(COLUMN_NAME),\
+          \ ' ', '_') ) WITHIN GROUP (ORDER BY ORDINAL_POSITION ASC), ',') AS QCOLS\r\
+          \nFROM INFORMATION_SCHEMA.COLUMNS\r\nWHERE TABLE_NAME = 'stg_batteryelectric_wide'\r\
+          \nAND COLUMN_NAME LIKE '%Q%'"
+        scalarVariableMapping:
+        - - "prvt_pivot_aliases"
+          - "QCOLS"
   variables:
     prvt_cols_dq:
       metadata:
         type: "TEXT"
-        description: ""
+        description: "List of columns to unpivot, comma separated, enclosed in double\
+          \ quotes"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: ""
+    prvt_cols_sq:
+      metadata:
+        type: "TEXT"
+        description: "Column list, comma separated, enclosed in single quotes"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: ""
+    prvt_pivot_aliases:
+      metadata:
+        type: "TEXT"
+        description: "Pivot column alias names, comma separated, no quotes"
         scope: "COPIED"
         visibility: "PRIVATE"
       defaultValue: ""
@@ -553,39 +614,54 @@ design:
   components:
     Start:
       position:
-        x: -270
+        x: -470
         "y": 0
       tempMetlId: 1
     Recreate stg_batteryelectric_wide:
       position:
-        x: -100
+        x: -320
         "y": 0
       tempMetlId: 2
-    Prepare column list:
+    Set prvt_cols_dq:
       position:
-        x: 290
-        "y": 0
+        x: 80
+        "y": 10
       tempMetlId: 3
     Print Variables:
       position:
-        x: 440
+        x: 460
         "y": 0
       tempMetlId: 4
     Run example transpose transformation 1 wide to narrow:
       position:
-        x: 620
+        x: 630
         "y": 0
       tempMetlId: 5
     S3 Load:
       position:
-        x: 20
+        x: -210
         "y": 0
       tempMetlId: 6
     Assert Table:
       position:
-        x: 130
+        x: -100
         "y": 0
       tempMetlId: 7
+    Run example transpose transformation 2 narrow to wide:
+      position:
+        x: 910
+        "y": 0
+      tempMetlId: 8
+    Set prvt_cols_sq:
+      position:
+        x: 190
+        "y": -30
+      tempMetlId: 10
+    Set prvt_pivot_aliases:
+      position:
+        x: 310
+        "y": 30
+      tempMetlId: 11
   notes:
     "1":
       position:
@@ -593,15 +669,52 @@ design:
         "y": -80
       size:
         height: 208
-        width: 210
+        width: 240
       theme: "white"
-      content: "Run the wide-to-narrow transpose"
+      content: "Run the wide-to-narrow transpose transformation"
     "2":
       position:
-        x: -160
+        x: -380
         "y": -80
       size:
         height: 208
         width: 380
       theme: "white"
       content: "Colocate and check the source data"
+    "3":
+      position:
+        x: 820
+        "y": -80
+      size:
+        height: 208
+        width: 240
+      theme: "white"
+      content: "Run the narrow-to-wide transpose transformations"
+    "4":
+      position:
+        x: 30
+        "y": -120
+      size:
+        height: 298
+        width: 390
+      theme: "white"
+      content: "Set the private pipeline variables for the UNPOVOT and PIVOT transformations"
+    "5":
+      position:
+        x: -750
+        "y": -380
+      size:
+        height: 258
+        width: 640
+      theme: "light-green"
+      content: |
+        A demonstration of techniques for transposing (pivoting) data between wide and narrow representations.
+
+        The sample data is from this [assessment of the UK's Electric Vehicle infrastructure](https://www.matillion.com/blog/an-assessment-of-the-uk-s-electric-vehicle-infrastructure)
+
+        After running this pipeline you should find four new database tables:
+
+        - stg_batteryelectric_wide (the original sample data)
+        - stg_batteryelectric_narrow (unpivoted)
+        - stg_batteryelectric_make (re-pivoted by make and model)
+        - stg_batteryelectric_make_model (re-pivoted and summed by make only)

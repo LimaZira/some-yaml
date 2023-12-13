@@ -6,34 +6,25 @@ pipeline:
       type: "start"
       transitions:
         unconditional:
-        - "And"
+        - "Run example transpose transformation 2 narrow to wide"
       parameters:
         componentName: "Start"
-    And:
-      type: "and"
-      transitions:
-        unconditional:
-        - "End Success"
+    Run example transpose transformation 2 narrow to wide:
+      type: "run-transformation"
       parameters:
-        componentName: "And"
-    End Success:
-      type: "end-success"
-      parameters:
-        componentName: "End Success"
+        componentName: "Run example transpose transformation 2 narrow to wide"
+        transformationJob: "Matillion Exchange/Snowflake/Transposing/example transpose\
+          \ transformation 2 narrow to wide"
+        setScalarVariables:
 design:
   components:
     Start:
       position:
-        x: -50
-        "y": -30
+        x: -130
+        "y": -20
       tempMetlId: 1
-    And:
+    Run example transpose transformation 2 narrow to wide:
       position:
-        x: 120
-        "y": -30
+        x: 80
+        "y": -20
       tempMetlId: 2
-    End Success:
-      position:
-        x: 270
-        "y": -30
-      tempMetlId: 3
