@@ -1,0 +1,24 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    stg_batteryelectric_narrow:
+      type: "table-input"
+      parameters:
+        componentName: "stg_batteryelectric_narrow"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_batteryelectric_narrow"
+        columnNames:
+        - "Make"
+        - "Model"
+        - "Quarter"
+        - "Vehicles"
+        timeOffset:
+design:
+  components:
+    stg_batteryelectric_narrow:
+      position:
+        x: 330
+        "y": 160
+      tempMetlId: 1

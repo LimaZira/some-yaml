@@ -13,10 +13,10 @@ pipeline:
       type: "create-table"
       transitions:
         success:
-        - "Prepare column list"
+        - "S3 Load"
       parameters:
         componentName: "Recreate stg_batteryelectric_wide"
-        createReplace: "Create if not exists"
+        createReplace: "Replace"
         database: "[Environment Default]"
         schema: "[Environment Default]"
         newTableName: "stg_batteryelectric_wide"
@@ -481,11 +481,66 @@ pipeline:
       type: "run-transformation"
       parameters:
         componentName: "Run example transpose transformation 1 wide to narrow"
-        transformationJob: "Matillion Exchange/Transposing/example transpose transformation\
-          \ 1 wide to narrow"
+        transformationJob: "Matillion Exchange/Snowflake/Transposing/example transpose\
+          \ transformation 1 wide to narrow"
         setScalarVariables:
         - - "jv_col_list"
           - "${prvt_cols_dq}"
+    S3 Load:
+      type: "s3-load"
+      transitions:
+        success:
+        - "Assert Table"
+      parameters:
+        componentName: "S3 Load"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://devrel.matillion.com"
+        pattern: "data/structured/EV/BatteryElectric.tsv"
+        encryption: "None"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_batteryelectric_wide"
+        loadColumns:
+        format: "[Custom]"
+        fileType: "CSV"
+        compression: "AUTO"
+        recordDelimiter:
+        fieldDelimiter: "\\t"
+        skipHeader: "1"
+        skipBlankLines: "False"
+        dateFormat:
+        timeFormat:
+        timestampFormat:
+        escape:
+        escapeUnenclosedField:
+        trimSpace: "False"
+        fieldOptionallyEnclosed:
+        nullIf:
+        errorOnColumnCountMismatch: "False"
+        emptyFieldAsNull: "True"
+        replaceInvalidCharacters: "False"
+        encodingType:
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        truncateColumns: "False"
+        forceLoad: "False"
+    Assert Table:
+      type: "assert-table"
+      transitions:
+        success:
+        - "Prepare column list"
+      parameters:
+        componentName: "Assert Table"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        tableName: "stg_batteryelectric_wide"
+        exists: "Yes"
+        tableMetadata:
+        rowCountComparisonType: "Equal To"
+        rowCountValue: "116"
   variables:
     prvt_cols_dq:
       metadata:
@@ -498,12 +553,12 @@ design:
   components:
     Start:
       position:
-        x: -10
+        x: -270
         "y": 0
       tempMetlId: 1
     Recreate stg_batteryelectric_wide:
       position:
-        x: 140
+        x: -100
         "y": 0
       tempMetlId: 2
     Prepare column list:
@@ -521,3 +576,32 @@ design:
         x: 620
         "y": 0
       tempMetlId: 5
+    S3 Load:
+      position:
+        x: 20
+        "y": 0
+      tempMetlId: 6
+    Assert Table:
+      position:
+        x: 130
+        "y": 0
+      tempMetlId: 7
+  notes:
+    "1":
+      position:
+        x: 540
+        "y": -80
+      size:
+        height: 208
+        width: 210
+      theme: "white"
+      content: "Run the wide-to-narrow transpose"
+    "2":
+      position:
+        x: -160
+        "y": -80
+      size:
+        height: 208
+        width: 380
+      theme: "white"
+      content: "Colocate and check the source data"

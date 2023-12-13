@@ -70,7 +70,58 @@ pipeline:
       - "stg_batteryelectric_wide"
       parameters:
         componentName: "UNPIVOT - wide to narrow"
-        query: "SELECT * FROM $T{stg_batteryelectric_wide}"
+        query: "SELECT *\r\nFROM $T{stg_batteryelectric_wide}\r\nUNPIVOT (\"Vehicles_String\"\
+          \ FOR \"Quarter\" IN (${jv_col_list}))\r\nORDER BY \"Make\", \"Model\",\
+          \ \"Quarter\""
+    Calculator:
+      type: "calculator"
+      sources:
+      - "UNPIVOT - wide to narrow"
+      parameters:
+        componentName: "Calculator"
+        includeInputColumns: "Yes"
+        calculations:
+        - - "TRY_TO_NUMBER(\"Vehicles_String\", '999,999,999')"
+          - "Vehicles"
+    Filter:
+      type: "filter"
+      sources:
+      - "Calculator"
+      parameters:
+        componentName: "Filter"
+        filterConditions:
+        - - "Vehicles"
+          - "Not"
+          - "Null"
+          - ""
+        combineCondition: "And"
+    Rename:
+      type: "rename"
+      sources:
+      - "Filter"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "Make"
+          - "Make"
+        - - "Model"
+          - "Model"
+        - - "Quarter"
+          - "Quarter"
+        - - "Vehicles"
+          - "Vehicles"
+        includeInputColumns: "No"
+    Rewrite stg_batteryelectric_narrow:
+      type: "rewrite-table"
+      sources:
+      - "Rename"
+      parameters:
+        componentName: "Rewrite stg_batteryelectric_narrow"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_batteryelectric_narrow"
+        orderBy:
   variables:
     jv_col_list:
       metadata:
@@ -88,6 +139,60 @@ design:
       tempMetlId: 1
     UNPIVOT - wide to narrow:
       position:
-        x: 760
+        x: 730
         "y": 170
       tempMetlId: 2
+    Calculator:
+      position:
+        x: 950
+        "y": 170
+      tempMetlId: 3
+    Filter:
+      position:
+        x: 1080
+        "y": 170
+      tempMetlId: 4
+    Rename:
+      position:
+        x: 1220
+        "y": 170
+      tempMetlId: 5
+    Rewrite stg_batteryelectric_narrow:
+      position:
+        x: 1410
+        "y": 170
+      tempMetlId: 6
+  notes:
+    "1":
+      position:
+        x: 640
+        "y": 80
+      size:
+        height: 208
+        width: 220
+      theme: "white"
+      content: "116 rows x 51 quarters = 5916 rows in the narrow layout"
+    "2":
+      position:
+        x: 920
+        "y": 80
+      size:
+        height: 208
+        width: 380
+      theme: "white"
+      content: |-
+        Remove values that are not numbers.
+
+        Should leave 1,928 rows
+    "3":
+      position:
+        x: 250
+        "y": 20
+      size:
+        height: 118
+        width: 320
+      theme: "white"
+      content: |-
+        This is a transpose from **wide** to **narrow**
+
+        I.e. **columns** to **rows** (an UNPIVOT)
