@@ -701,8 +701,8 @@ design:
       content: "Set the private pipeline variables for the UNPOVOT and PIVOT transformations"
     "5":
       position:
-        x: -750
-        "y": -380
+        x: -720
+        "y": -400
       size:
         height: 258
         width: 640
