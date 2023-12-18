@@ -1,0 +1,205 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    Orders:
+      type: "table-input"
+      parameters:
+        componentName: "Orders"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "gw_ORDERS"
+        columnNames:
+        - - "RowId"
+        - - "RID"
+        - - "CUSTOMER_RID"
+        - - "ORDER_DATE"
+        - - "LAST_UPDATED"
+        timeOffset:
+    Order Items:
+      type: "table-input"
+      parameters:
+        componentName: "Order Items"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "gw_ORDER_ITEMS"
+        columnNames:
+        - - "RowId"
+        - - "RID"
+        - - "ORDER_RID"
+        - - "ITEM_RID"
+        - - "QUANTITY"
+        - - "LAST_UPDATED"
+        timeOffset:
+    Order Item Join:
+      type: "join"
+      sources:
+      - "Orders"
+      - "Order Items"
+      - "Item Reference"
+      parameters:
+        componentName: "Order Item Join"
+        mainTable: "Orders"
+        mainTableAlias: "o"
+        joins:
+        - - "Order Items"
+          - "i"
+          - "Inner"
+        - - "Item Reference"
+          - "ref"
+          - "Inner"
+        joinExpressions:
+        - - "\"o\".\"RID\" = \"i\".\"ORDER_RID\""
+          - "o_Inner_i"
+        - - "\"i\".\"ITEM_RID\" = \"ref\".\"RID\""
+          - "o_Inner_ref"
+        columnMappings:
+        - - "o.ORDER_DATE"
+          - "order_date"
+        - - "i.QUANTITY"
+          - "quantity"
+        - - "o.CUSTOMER_RID"
+          - "CUSTOMER_RID"
+    Customer Accounts:
+      type: "table-input"
+      parameters:
+        componentName: "Customer Accounts"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "gw_customer_accounts"
+        columnNames:
+        - - "DataValue"
+        timeOffset:
+    Flatten JSON:
+      type: "extract-nested-data-sf"
+      sources:
+      - "Customer Accounts"
+      parameters:
+        componentName: "Flatten JSON"
+        includeInputColumns: "No"
+        columns:
+        - name: "data"
+          datatype: "VARIANT"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DataValue"
+          aliasName: "data"
+          isArray: "true"
+          include: "false"
+          childElements:
+          - name: "data-element"
+            datatype: "VARIANT"
+            size: "0"
+            decimalPlaces: "0"
+            columnName: "DataValue"
+            aliasName: "data-element"
+            isArray: "false"
+            include: "false"
+            childElements:
+            - name: "customer_rid"
+              datatype: "NUMBER"
+              size: "0"
+              decimalPlaces: "0"
+              columnName: "DataValue"
+              aliasName: "customer_rid"
+              isArray: "false"
+              include: "true"
+            - name: "account_name"
+              datatype: "VARCHAR"
+              size: "0"
+              decimalPlaces: "0"
+              columnName: "DataValue"
+              aliasName: "account_name"
+              isArray: "false"
+              include: "true"
+        outerJoin: "False"
+        inputAlias: "i"
+        arrayPrefix: "f"
+        castingMethod: "Fail on invalid data"
+        caseColumnAliasNames: "No"
+    Item Reference:
+      type: "table-input"
+      parameters:
+        componentName: "Item Reference"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "gw_ITEMS"
+        columnNames:
+        - - "COST"
+        - - "LAST_UPDATED"
+        - - "NAME"
+        - - "PRICE"
+        - - "RID"
+        timeOffset:
+    Link Accounts:
+      type: "join"
+      sources:
+      - "Flatten JSON"
+      - "Order Item Join"
+      parameters:
+        componentName: "Link Accounts"
+        mainTable: "Order Item Join"
+        mainTableAlias: "oi"
+        joins:
+        - - "Flatten JSON"
+          - "acc"
+          - "Inner"
+        joinExpressions:
+        - - "\"oi\".\"CUSTOMER_RID\" = \"acc\".\"customer_rid\""
+          - "oi_Inner_acc"
+        columnMappings:
+        - - "oi.order_date"
+          - "order_date"
+        - - "oi.quantity"
+          - "quantity"
+        - - "acc.customer_rid"
+          - "customer_rid"
+        - - "acc.account_name"
+          - "account_name"
+design:
+  components:
+    Orders:
+      position:
+        x: 105
+        "y": 270
+      tempMetlId: 1
+    Order Items:
+      position:
+        x: 105
+        "y": 360
+      tempMetlId: 2
+    Order Item Join:
+      position:
+        x: 300
+        "y": 360
+      tempMetlId: 3
+    Customer Accounts:
+      position:
+        x: 105
+        "y": 135
+      tempMetlId: 4
+    Flatten JSON:
+      position:
+        x: 300
+        "y": 135
+      tempMetlId: 5
+    Item Reference:
+      position:
+        x: 105
+        "y": 450
+      tempMetlId: 6
+    Link Accounts:
+      position:
+        x: 510
+        "y": 240
+      tempMetlId: 7
+  notes:
+    "1":
+      position:
+        x: 750
+        "y": 195
+      size:
+        height: 163
+        width: 300
+      theme: "white"
+      content: "Add cost and price from the Item Reference"
