@@ -1,0 +1,82 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Salesforce Account"
+        - "Salesforce Company_Data__c"
+      parameters:
+        componentName: "Start"
+    Salesforce Account:
+      type: "salesforce-query"
+      parameters:
+        componentName: "Salesforce Account"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "Salesforce-2024"
+        connectionOptions:
+        dataSource: "Account"
+        dataSelection:
+        - "Id"
+        - "Name"
+        - "Company_Data__c"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        type: "Standard"
+        primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Company_Data__c:
+      type: "salesforce-query"
+      parameters:
+        componentName: "Salesforce Company_Data__c"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "Salesforce-2024"
+        connectionOptions:
+        dataSource: "Company_Data__c"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        type: "Standard"
+        primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_company_data__c"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+        autoDebug: "Off"
+design:
+  components:
+    Start:
+      position:
+        x: -10
+        "y": -10
+      tempMetlId: 1
+    Salesforce Account:
+      position:
+        x: 130
+        "y": -70
+      tempMetlId: 2
+    Salesforce Company_Data__c:
+      position:
+        x: 130
+        "y": 50
+      tempMetlId: 3
