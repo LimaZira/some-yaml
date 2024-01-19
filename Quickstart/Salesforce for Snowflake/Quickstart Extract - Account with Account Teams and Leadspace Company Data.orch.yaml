@@ -12,6 +12,9 @@ pipeline:
         componentName: "Start"
     Salesforce Account:
       type: "salesforce-query"
+      transitions:
+        success:
+        - "And"
       parameters:
         componentName: "Salesforce Account"
         basicAdvancedMode: "Basic"
@@ -39,6 +42,9 @@ pipeline:
         autoDebug: "Off"
     Salesforce Company_Data__c:
       type: "salesforce-query"
+      transitions:
+        success:
+        - "And"
       parameters:
         componentName: "Salesforce Company_Data__c"
         basicAdvancedMode: "Basic"
@@ -63,6 +69,20 @@ pipeline:
         stagePlatform: "Snowflake Managed"
         loadOptions:
         autoDebug: "Off"
+    And:
+      type: "and"
+      transitions:
+        unconditional:
+        - "Run Transformation"
+      parameters:
+        componentName: "And"
+    Run Transformation:
+      type: "run-transformation"
+      parameters:
+        componentName: "Run Transformation"
+        transformationJob:
+        setScalarVariables:
+        setGridVariables:
   variables:
     SalesforceOAuthName:
       metadata:
@@ -88,3 +108,24 @@ design:
         x: 130
         "y": 50
       tempMetlId: 3
+    And:
+      position:
+        x: 280
+        "y": 20
+      tempMetlId: 4
+    Run Transformation:
+      position:
+        x: 420
+        "y": -10
+      tempMetlId: 5
+  notes:
+    "1":
+      position:
+        x: -310
+        "y": -130
+      size:
+        height: 88
+        width: 340
+      theme: "light-red"
+      content: "Remember to set the default value of the `SalesforceOAuthName` pipeline\
+        \ variable"
