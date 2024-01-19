@@ -17,7 +17,7 @@ pipeline:
         basicAdvancedMode: "Basic"
         authenticationMethod: "OAuth"
         useSandbox: "No"
-        authentication: "Salesforce-2024"
+        authentication: "${SalesforceOAuthName}"
         connectionOptions:
         dataSource: "Account"
         dataSelection:
@@ -44,7 +44,7 @@ pipeline:
         basicAdvancedMode: "Basic"
         authenticationMethod: "OAuth"
         useSandbox: "No"
-        authentication: "Salesforce-2024"
+        authentication: "${SalesforceOAuthName}"
         connectionOptions:
         dataSource: "Company_Data__c"
         dataSelection:
@@ -63,6 +63,14 @@ pipeline:
         stagePlatform: "Snowflake Managed"
         loadOptions:
         autoDebug: "Off"
+  variables:
+    SalesforceOAuthName:
+      metadata:
+        type: "TEXT"
+        description: ""
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: "name-of-your-OAuth"
 design:
   components:
     Start:
