@@ -9,10 +9,14 @@ pipeline:
         - "RunTran"
         - "RunTran 2"
         - "RunTran 3"
+        - "RunTran 4"
       parameters:
         componentName: "Starter"
     RunTran:
       type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
       parameters:
         componentName: "RunTran"
         transformationJob: "Thingy"
@@ -20,6 +24,9 @@ pipeline:
         setGridVariables:
     RunTran 2:
       type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
       parameters:
         componentName: "RunTran 2"
         transformationJob: "Another Jobby"
@@ -27,11 +34,28 @@ pipeline:
         setGridVariables:
     RunTran 3:
       type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
       parameters:
         componentName: "RunTran 3"
         transformationJob: "TxJob"
         setScalarVariables:
         setGridVariables:
+    RunTran 4:
+      type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
+      parameters:
+        componentName: "RunTran 4"
+        transformationJob: "More Jobies"
+        setScalarVariables:
+        setGridVariables:
+    Andy Pandy:
+      type: "and"
+      parameters:
+        componentName: "Andy Pandy"
 design:
   components:
     Starter:
@@ -42,15 +66,25 @@ design:
     RunTran:
       position:
         x: 100
-        y: -100
+        y: -150
       tempMetlId: 2
     RunTran 2:
       position:
         x: 100
-        y: 0
+        y: -50
       tempMetlId: 3
     RunTran 3:
       position:
         x: 100
-        y: 100
+        y: 50
       tempMetlId: 4
+    RunTran 4:
+      position:
+        x: 100
+        y: 150
+      tempMetlId: 5
+    Andy Pandy:
+      position:
+        x: 200
+        y: 0
+      tempMetlId: 6
