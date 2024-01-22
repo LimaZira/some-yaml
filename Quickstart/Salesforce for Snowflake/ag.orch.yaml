@@ -4,8 +4,18 @@ pipeline:
   components:
     Starter:
       type: "start"
+      transitions:
+        success:
+        - "RunTran"
       parameters:
         componentName: "Starter"
+    RunTran:
+      type: "run-transformation"
+      parameters:
+        componentName: "RunTran"
+        transformationJob: "Thingy"
+        setScalarVariables:
+        setGridVariables:
 design:
   components:
     Starter:
@@ -13,3 +23,8 @@ design:
         "x": 0
         "y": 0
       tempMetlId: 1
+    RunTran:
+      position:
+        "x": 100
+        "y": 0
+      tempMetlId: 2
