@@ -8,6 +8,7 @@ pipeline:
         success:
         - "RunTran"
         - "RunTran 2"
+        - "RunTran 3"
       parameters:
         componentName: "Starter"
     RunTran:
@@ -24,6 +25,13 @@ pipeline:
         transformationJob: "Another Jobby"
         setScalarVariables:
         setGridVariables:
+    RunTran 3:
+      type: "run-transformation"
+      parameters:
+        componentName: "RunTran 3"
+        transformationJob: "TxJob"
+        setScalarVariables:
+        setGridVariables:
 design:
   components:
     Starter:
@@ -34,10 +42,15 @@ design:
     RunTran:
       position:
         x: 100
-        y: -50
+        y: -100
       tempMetlId: 2
     RunTran 2:
       position:
         x: 100
-        y: 50
+        y: 0
       tempMetlId: 3
+    RunTran 3:
+      position:
+        x: 100
+        y: 100
+      tempMetlId: 4
