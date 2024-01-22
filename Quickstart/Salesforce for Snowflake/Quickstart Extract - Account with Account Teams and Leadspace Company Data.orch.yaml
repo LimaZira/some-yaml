@@ -2,130 +2,89 @@ type: "orchestration"
 version: "1.0"
 pipeline:
   components:
-    Start:
+    Starter:
       type: "start"
       transitions:
-        unconditional:
-        - "Salesforce Account"
-        - "Salesforce Company_Data__c"
-      parameters:
-        componentName: "Start"
-    Salesforce Account:
-      type: "salesforce-query"
-      transitions:
         success:
-        - "And"
+        - "RunTran"
+        - "RunTran 2"
+        - "RunTran 3"
+        - "RunTran 4"
       parameters:
-        componentName: "Salesforce Account"
-        basicAdvancedMode: "Basic"
-        authenticationMethod: "OAuth"
-        useSandbox: "No"
-        authentication: "${SalesforceOAuthName}"
-        connectionOptions:
-        dataSource: "Account"
-        dataSelection:
-        - "Id"
-        - "Name"
-        - "Company_Data__c"
-        dataSourceFilter:
-        combineFilters: "And"
-        limit: "100"
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_account"
-        stage: "[Custom]"
-        stagePlatform: "Snowflake Managed"
-        loadOptions:
-        autoDebug: "Off"
-    Salesforce Company_Data__c:
-      type: "salesforce-query"
-      transitions:
-        success:
-        - "And"
-      parameters:
-        componentName: "Salesforce Company_Data__c"
-        basicAdvancedMode: "Basic"
-        authenticationMethod: "OAuth"
-        useSandbox: "No"
-        authentication: "${SalesforceOAuthName}"
-        connectionOptions:
-        dataSource: "Company_Data__c"
-        dataSelection:
-        - "Id"
-        - "Name"
-        dataSourceFilter:
-        combineFilters: "And"
-        limit: "100"
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_company_data__c"
-        stage: "[Custom]"
-        stagePlatform: "Snowflake Managed"
-        loadOptions:
-        autoDebug: "Off"
-    And:
-      type: "and"
-      transitions:
-        unconditional:
-        - "Run Transformation"
-      parameters:
-        componentName: "And"
-    Run Transformation:
+        componentName: "Starter"
+    RunTran:
       type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
       parameters:
-        componentName: "Run Transformation"
-        transformationJob:
+        componentName: "RunTran"
+        transformationJob: "Thingy"
         setScalarVariables:
         setGridVariables:
-  variables:
-    SalesforceOAuthName:
-      metadata:
-        type: "TEXT"
-        description: ""
-        scope: "COPIED"
-        visibility: "PRIVATE"
-      defaultValue: "name-of-your-OAuth"
+    RunTran 2:
+      type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
+      parameters:
+        componentName: "RunTran 2"
+        transformationJob: "Another Jobby"
+        setScalarVariables:
+        setGridVariables:
+    RunTran 3:
+      type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
+      parameters:
+        componentName: "RunTran 3"
+        transformationJob: "TxJob"
+        setScalarVariables:
+        setGridVariables:
+    RunTran 4:
+      type: "run-transformation"
+      transitions:
+        success:
+        - "Andy Pandy"
+      parameters:
+        componentName: "RunTran 4"
+        transformationJob: "More Jobies"
+        setScalarVariables:
+        setGridVariables:
+    Andy Pandy:
+      type: "and"
+      parameters:
+        componentName: "Andy Pandy"
 design:
   components:
-    Start:
+    Starter:
       position:
-        x: -10
-        "y": -10
+        x: 0
+        y: 0
       tempMetlId: 1
-    Salesforce Account:
+    RunTran:
       position:
-        x: 130
-        "y": -70
+        x: 100
+        y: -150
       tempMetlId: 2
-    Salesforce Company_Data__c:
+    RunTran 2:
       position:
-        x: 130
-        "y": 50
+        x: 100
+        y: -50
       tempMetlId: 3
-    And:
+    RunTran 3:
       position:
-        x: 280
-        "y": 20
+        x: 100
+        y: 50
       tempMetlId: 4
-    Run Transformation:
+    RunTran 4:
       position:
-        x: 420
-        "y": -10
+        x: 100
+        y: 150
       tempMetlId: 5
-  notes:
-    "1":
+    Andy Pandy:
       position:
-        x: -310
-        "y": -130
-      size:
-        height: 88
-        width: 340
-      theme: "light-red"
-      content: "Remember to set the default value of the `SalesforceOAuthName` pipeline\
-        \ variable"
+        x: 200
+        y: 0
+      tempMetlId: 6
