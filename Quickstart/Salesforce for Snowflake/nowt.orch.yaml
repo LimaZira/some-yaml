@@ -2,13 +2,13 @@ type: "orchestration"
 version: "1.0"
 pipeline:
   components:
-    Start:
+    Starty Farty:
       type: "start"
       parameters:
-        componentName: "Start"
+        componentName: "Starty Farty"
 design:
   components:
-    Start:
+    Starty Farty:
       position:
         x: 0
         "y": 0
