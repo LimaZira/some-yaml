@@ -3,13 +3,13 @@ version: "1.0"
 pipeline:
   components:
     Starter:
-      type: "start":
+      type: "start"
       parameters:
         componentName: "Starter"
 design:
   components:
     Starter:
       position:
-        x: 0
+        "x": 0
         "y": 0
       tempMetlId: 1
