@@ -54,8 +54,38 @@ pipeline:
         setGridVariables:
     Andy Pandy:
       type: "and"
+      transitions:
+        success:
+        - "SF Accounts"
       parameters:
         componentName: "Andy Pandy"
+    SF Accounts:
+      type: "salesforce-query"
+      parameters:
+        componentName: "SF Accounts"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Account"
+        dataSelection:
+        - "Id"
+        - "Name"
+        - "Company_Data__c"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit:
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_account"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
 design:
   components:
     Starter:
@@ -88,3 +118,8 @@ design:
         x: 200
         y: 0
       tempMetlId: 6
+    SF Accounts:
+      position:
+        x: 300
+        y: 0
+      tempMetlId: 7
