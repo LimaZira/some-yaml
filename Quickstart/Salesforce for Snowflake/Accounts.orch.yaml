@@ -147,9 +147,7 @@ pipeline:
         dataSource: "Product2"
         dataSelection:
         - "Id"
-        - "AccountFromId"
-        - "AccountToId"
-        - "Role"
+        - "Name"
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
@@ -178,7 +176,9 @@ pipeline:
         dataSource: "Partner"
         dataSelection:
         - "Id"
-        - "Name"
+        - "AccountFromId"
+        - "AccountToId"
+        - "Role"
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
