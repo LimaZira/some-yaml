@@ -22,11 +22,10 @@ pipeline:
         useSandbox: "No"
         authentication: "${SalesforceOAuthName}"
         connectionOptions:
-        dataSource: "Account"
+        dataSource: "UserRole"
         dataSelection:
         - "Id"
         - "Name"
-        - "Company_Data__c"
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
@@ -90,7 +89,7 @@ pipeline:
         description: ""
         scope: "COPIED"
         visibility: "PRIVATE"
-      defaultValue: "name-of-your-OAuth"
+      defaultValue: "Salesforce-2024"
 design:
   components:
     Start:
