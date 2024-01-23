@@ -147,9 +147,10 @@ pipeline:
         dataSource: "Product2"
         dataSelection:
         - "Id"
-        - "Name"
-        dataSourceFilter:
-        combineFilters: "And"
+        - "AccountFromId"
+        - "AccountToId"
+        - "Role"
+         dataSourceFilter:        combineFilters: "And"
         limit: "100"
         database: "[Environment Default]"
         primaryKeys:
