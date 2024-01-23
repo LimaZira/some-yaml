@@ -150,7 +150,8 @@ pipeline:
         - "AccountFromId"
         - "AccountToId"
         - "Role"
-         dataSourceFilter:        combineFilters: "And"
+        dataSourceFilter:
+        combineFilters: "And"
         limit: "100"
         database: "[Environment Default]"
         primaryKeys:
