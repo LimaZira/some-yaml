@@ -2,67 +2,21 @@ type: "orchestration"
 version: "1.0"
 pipeline:
   components:
-    Starter:
+    Start:
       type: "start"
       transitions:
-        success:
-        - "RunTran"
-        - "RunTran 2"
-        - "RunTran 3"
-        - "RunTran 4"
+        unconditional:
+        - "Salesforce Account"
+        - "Salesforce Account"
       parameters:
-        componentName: "Starter"
-    RunTran:
-      type: "run-transformation"
-      transitions:
-        success:
-        - "Do the AND"
-      parameters:
-        componentName: "RunTran"
-        transformationJob: "Thingy"
-        setScalarVariables:
-        setGridVariables:
-    RunTran 2:
-      type: "run-transformation"
-      transitions:
-        success:
-        - "Do the AND"
-      parameters:
-        componentName: "RunTran 2"
-        transformationJob: "Another Jobby"
-        setScalarVariables:
-        setGridVariables:
-    RunTran 3:
-      type: "run-transformation"
-      transitions:
-        success:
-        - "Do the AND"
-      parameters:
-        componentName: "RunTran 3"
-        transformationJob: "TxJob"
-        setScalarVariables:
-        setGridVariables:
-    RunTran 4:
-      type: "run-transformation"
-      transitions:
-        success:
-        - "Do the AND"
-      parameters:
-        componentName: "RunTran 4"
-        transformationJob: "More Jobies"
-        setScalarVariables:
-        setGridVariables:
-    Do the AND:
-      type: "and"
-      transitions:
-        success:
-        - "SF Accounts"
-      parameters:
-        componentName: "Do the AND"
-    SF Accounts:
+        componentName: "Start"
+    Salesforce Account:
       type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
       parameters:
-        componentName: "SF Accounts"
+        componentName: "Salesforce Account"
         basicAdvancedMode: "Basic"
         authenticationMethod: "OAuth"
         useSandbox: "No"
@@ -75,7 +29,7 @@ pipeline:
         - "Company_Data__c"
         dataSourceFilter:
         combineFilters: "And"
-        limit:
+        limit: "100"
         database: "[Environment Default]"
         primaryKeys:
         schema: "[Environment Default]"
@@ -86,48 +40,81 @@ pipeline:
         warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
+    Salesforce Account:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Account"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "UserRole"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_userrole"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Sync:
+      type: "and"
+      transitions:
+        success:
+        - "RunTran"
+      parameters:
+        componentName: "Sync"
+    RunTran:
+      type: "run-transformation"
+      parameters:
+        componentName: "RunTran"
+        transformationJob: "Thingy"
+        setScalarVariables:
+        setGridVariables:
   variables:
-    SFAuthName:
+    SalesforceOAuthName:
       metadata:
         type: "TEXT"
-        description: "Your Salesforce OAuth"
+        description: "Name of your Salesforce OAuth"
         scope: "COPIED"
         visibility: "PRIVATE"
-      defaultValue: "your-value-here"
+      defaultValue: "Salesforce-2024"
 design:
   components:
-    Starter:
+    Start:
       position:
         x: 0
         y: 0
       tempMetlId: 1
-    RunTran:
-      position:
-        x: 150
-        y: -150
-      tempMetlId: 2
-    RunTran 2:
+    Salesforce Account:
       position:
         x: 150
         y: -50
-      tempMetlId: 3
-    RunTran 3:
+      tempMetlId: 2
+    Salesforce Account:
       position:
         x: 150
         y: 50
-      tempMetlId: 4
-    RunTran 4:
-      position:
-        x: 150
-        y: 150
-      tempMetlId: 5
-    Do the AND:
+      tempMetlId: 3
+    Sync:
       position:
         x: 300
         y: 0
-      tempMetlId: 6
-    SF Accounts:
+      tempMetlId: 4
+    RunTran:
       position:
         x: 450
         y: 0
-      tempMetlId: 7
+      tempMetlId: 5
