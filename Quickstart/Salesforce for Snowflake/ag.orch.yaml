@@ -7,7 +7,7 @@ pipeline:
       transitions:
         unconditional:
         - "Salesforce Account"
-        - "Salesforce Account"
+        - "Salesforce UserRole"
       parameters:
         componentName: "Start"
     Salesforce Account:
@@ -40,13 +40,13 @@ pipeline:
         warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
-    Salesforce Account:
+    Salesforce UserRole:
       type: "salesforce-query"
       transitions:
         success:
         - "Sync"
       parameters:
-        componentName: "Salesforce Account"
+        componentName: "Salesforce UserRole"
         basicAdvancedMode: "Basic"
         authenticationMethod: "OAuth"
         useSandbox: "No"
@@ -103,7 +103,7 @@ design:
         x: 150
         y: -50
       tempMetlId: 2
-    Salesforce Account:
+    Salesforce UserRole:
       position:
         x: 150
         y: 50
