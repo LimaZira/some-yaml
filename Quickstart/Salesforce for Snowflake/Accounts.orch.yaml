@@ -1,0 +1,280 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Salesforce UserRole"
+        - "Salesforce Account"
+        - "Salesforce Asset"
+        - "Salesforce User"
+        - "Salesforce Product2"
+        - "Salesforce Partner"
+        - "Salesforce Contact"
+      parameters:
+        componentName: "Start"
+    Salesforce UserRole:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce UserRole"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "UserRole"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_userrole"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Account:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Account"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Account"
+        dataSelection:
+        - "Id"
+        - "Name"
+        - "Company_Data__c"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_account"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Asset:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Asset"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Asset"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_asset"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce User:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce User"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "User"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_user"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Product2:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Product2"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Product2"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_product2"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Partner:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Partner"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Partner"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_partner"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Contact:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Contact"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Contact"
+        dataSelection:
+        - "Id"
+        - "Name"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_contact"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Sync:
+      type: "and"
+      parameters:
+        componentName: "Sync"
+  variables:
+    SalesforceOAuthName:
+      metadata:
+        type: "TEXT"
+        description: "Name of your Salesforce OAuth"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: "Salesforce-2024"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        y: 0
+      tempMetlId: 1
+    Salesforce UserRole:
+      position:
+        x: 150
+        y: -300
+      tempMetlId: 3
+    Salesforce Account:
+      position:
+        x: 150
+        y: -200
+      tempMetlId: 4
+    Salesforce Asset:
+      position:
+        x: 150
+        y: -100
+      tempMetlId: 5
+    Salesforce User:
+      position:
+        x: 150
+        y: 0
+      tempMetlId: 6
+    Salesforce Product2:
+      position:
+        x: 150
+        y: 100
+      tempMetlId: 7
+    Salesforce Partner:
+      position:
+        x: 150
+        y: 200
+      tempMetlId: 8
+    Salesforce Contact:
+      position:
+        x: 150
+        y: 300
+      tempMetlId: 9
+    Sync:
+      position:
+        x: 300
+        y: 0
+      tempMetlId: 2
