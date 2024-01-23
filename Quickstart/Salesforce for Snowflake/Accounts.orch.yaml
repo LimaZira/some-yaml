@@ -15,6 +15,13 @@ pipeline:
         - "Salesforce Contact"
       parameters:
         componentName: "Start"
+    Sync:
+      type: "and"
+      transitions:
+        unconditional:
+        - "Run Transformation"
+      parameters:
+        componentName: "Sync"
     Salesforce UserRole:
       type: "salesforce-query"
       transitions:
@@ -34,14 +41,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_userrole"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_userrole"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Account:
@@ -64,14 +71,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_account"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Asset:
@@ -93,14 +100,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_asset"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_asset"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce User:
@@ -122,14 +129,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_user"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_user"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Product2:
@@ -151,14 +158,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_product2"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_product2"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Partner:
@@ -182,14 +189,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_partner"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_partner"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Contact:
@@ -211,20 +218,23 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_contact"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
-    Sync:
-      type: "and"
+    Run Transformation:
+      type: "run-transformation"
       parameters:
-        componentName: "Sync"
+        componentName: "Run Transformation"
+        transformationJob:
+        setScalarVariables:
+        setGridVariables:
   variables:
     SalesforceOAuthName:
       metadata:
@@ -238,45 +248,50 @@ design:
     Start:
       position:
         x: 0
-        y: 0
+        "y": 0
       tempMetlId: 1
+    Sync:
+      position:
+        x: 300
+        "y": 0
+      tempMetlId: 2
     Salesforce UserRole:
       position:
         x: 150
-        y: -300
+        "y": -300
       tempMetlId: 3
     Salesforce Account:
       position:
         x: 150
-        y: -200
+        "y": -200
       tempMetlId: 4
     Salesforce Asset:
       position:
         x: 150
-        y: -100
+        "y": -100
       tempMetlId: 5
     Salesforce User:
       position:
         x: 150
-        y: 0
+        "y": 0
       tempMetlId: 6
     Salesforce Product2:
       position:
         x: 150
-        y: 100
+        "y": 100
       tempMetlId: 7
     Salesforce Partner:
       position:
         x: 150
-        y: 200
+        "y": 200
       tempMetlId: 8
     Salesforce Contact:
       position:
         x: 150
-        y: 300
+        "y": 300
       tempMetlId: 9
-    Sync:
+    Run Transformation:
       position:
-        x: 300
-        y: 0
-      tempMetlId: 2
+        x: 420
+        "y": 0
+      tempMetlId: 10
