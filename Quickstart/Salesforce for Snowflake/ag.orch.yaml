@@ -16,7 +16,7 @@ pipeline:
       type: "run-transformation"
       transitions:
         success:
-        - "Andy Pandy"
+        - "Do the AND"
       parameters:
         componentName: "RunTran"
         transformationJob: "Thingy"
@@ -26,7 +26,7 @@ pipeline:
       type: "run-transformation"
       transitions:
         success:
-        - "Andy Pandy"
+        - "Do the AND"
       parameters:
         componentName: "RunTran 2"
         transformationJob: "Another Jobby"
@@ -36,7 +36,7 @@ pipeline:
       type: "run-transformation"
       transitions:
         success:
-        - "Andy Pandy"
+        - "Do the AND"
       parameters:
         componentName: "RunTran 3"
         transformationJob: "TxJob"
@@ -46,19 +46,19 @@ pipeline:
       type: "run-transformation"
       transitions:
         success:
-        - "Andy Pandy"
+        - "Do the AND"
       parameters:
         componentName: "RunTran 4"
         transformationJob: "More Jobies"
         setScalarVariables:
         setGridVariables:
-    Andy Pandy:
+    Do the AND:
       type: "and"
       transitions:
         success:
         - "SF Accounts"
       parameters:
-        componentName: "Andy Pandy"
+        componentName: "Do the AND"
     SF Accounts:
       type: "salesforce-query"
       parameters:
@@ -95,31 +95,31 @@ design:
       tempMetlId: 1
     RunTran:
       position:
-        x: 100
+        x: 150
         y: -150
       tempMetlId: 2
     RunTran 2:
       position:
-        x: 100
+        x: 150
         y: -50
       tempMetlId: 3
     RunTran 3:
       position:
-        x: 100
+        x: 150
         y: 50
       tempMetlId: 4
     RunTran 4:
       position:
-        x: 100
+        x: 150
         y: 150
       tempMetlId: 5
-    Andy Pandy:
+    Do the AND:
       position:
-        x: 200
+        x: 300
         y: 0
       tempMetlId: 6
     SF Accounts:
       position:
-        x: 300
+        x: 450
         y: 0
       tempMetlId: 7
