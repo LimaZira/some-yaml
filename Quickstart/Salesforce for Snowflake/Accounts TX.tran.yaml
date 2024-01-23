@@ -80,7 +80,7 @@ design:
     mtln_qs_sf_user:
       position:
         x: 440
-        "y": 160
+        "y": 190
       tempMetlId: 1
     mtln_qs_sf_account:
       position:

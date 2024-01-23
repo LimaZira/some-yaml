@@ -232,7 +232,7 @@ pipeline:
       type: "run-transformation"
       parameters:
         componentName: "Run Transformation"
-        transformationJob:
+        transformationJob: "Quickstart/Salesforce for Snowflake/Accounts TX"
         setScalarVariables:
         setGridVariables:
   variables:
