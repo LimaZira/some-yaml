@@ -86,6 +86,14 @@ pipeline:
         warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
+  variables:
+    SFAuthName:
+      metadata:
+        type: "TEXT"
+        description: "Your Salesforce OAuth"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: "your-value-here"
 design:
   components:
     Starter:
