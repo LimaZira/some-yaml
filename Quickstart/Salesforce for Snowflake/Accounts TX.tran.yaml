@@ -39,16 +39,27 @@ pipeline:
         - - "mtln_qs_sf_user"
           - "u1"
           - "Left"
+        - - "mtln_qs_sf_contact"
+          - "cnt3"
+          - "Left"
         joinExpressions:
         - - "\"acc\".\"Name\" = \"u1\".\"Name\""
           - "acc_Left_u1"
+        - - "\"cnt3\".\"AccountId\" = \"acc\".\"Id\""
+          - "acc_Left_cnt3"
         columnMappings:
         - - "acc.Id"
           - "acc_Id"
         - - "acc.Name"
           - "acc_Name"
         - - "acc.Company_Data__c"
-          - "acc_Company_Data__c"
+          - "Company_Data__c"
+        - - "cnt3.Id"
+          - "cnt3_Id"
+        - - "cnt3.Name"
+          - "cnt3_Name"
+        - - "cnt3.AccountId"
+          - "AccountId"
         - - "u1.Id"
           - "u1_Id"
         - - "u1.Name"
@@ -86,15 +97,7 @@ pipeline:
         columnNames:
         - "Id"
         - "Name"
-        timeOffset:
-    mtln_qs_sf_contact 2:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_contact 2"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_contact"
-        columnNames:
+        - "AccountId"
         timeOffset:
 design:
   components:
@@ -128,8 +131,3 @@ design:
         x: 440
         "y": 110
       tempMetlId: 6
-    mtln_qs_sf_contact 2:
-      position:
-        x: 240
-        "y": 130
-      tempMetlId: 7

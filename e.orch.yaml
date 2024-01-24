@@ -1,0 +1,28 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "SQL Script"
+      parameters:
+        componentName: "Start"
+    SQL Script:
+      type: "sql-script"
+      parameters:
+        componentName: "SQL Script"
+        sqlScript: "DROP SEQUENCE IF EXISTS idonotexist;"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    SQL Script:
+      position:
+        x: 140
+        "y": 0
+      tempMetlId: 2
