@@ -1,0 +1,97 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    mtln_qs_sf_account:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_account"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
+        timeOffset:
+        columnNames:
+        - "Id"
+        - "Name"
+        - "Company_Data__c"
+    mtln_qs_sf_user:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_user"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_user"
+        timeOffset:
+        columnNames:
+        - "Id"
+        - "Name"
+    mtln_qs_sf_contact:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_contact"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
+        timeOffset:
+        columnNames:
+        - "Id"
+        - "Name"
+    Join:
+      type: "join"
+      sources:
+      - "mtln_qs_sf_account"
+      - "mtln_qs_sf_contact"
+      - "mtln_qs_sf_user"
+      parameters:
+        componentName: "Join"
+        mainTable: "mtln_qs_sf_account"
+        mainTableAlias: "ccna1"
+        joins:
+        - - "mtln_qs_sf_user"
+          - "sra2"
+          - "Left"
+        - - "mtln_qs_sf_contact"
+          - "cnta3"
+          - "Left"
+        joinExpressions:
+        - - "\"ccna1\".\"Id\" = \"sra2\".\"AccountId\""
+          - "ccna1_Left_sra2"
+        - - "\"ccna1\".\"Id\" = \"cnta3\".\"AccountId\""
+          - "ccna1_Left_cnta3"
+        columnMappings:
+        - - "ccna1.Id"
+          - "ccna1_Id"
+        - - "ccna1.Name"
+          - "ccna1_Name"
+        - - "ccna1.Company_Data__c"
+          - "ccna1_Company_Data__c"
+        - - "sra2.Id"
+          - "sra2_Id"
+        - - "sra2.Name"
+          - "sra2_Name"
+        - - "cnta3.Id"
+          - "cnta3_Id"
+        - - "cnta3.Name"
+          - "cnta3_Name"
+design:
+  components:
+    mtln_qs_sf_account:
+      position:
+        x: 0
+        y: -100
+      tempMetlId: 2
+    mtln_qs_sf_user:
+      position:
+        x: 0
+        y: 0
+      tempMetlId: 3
+    mtln_qs_sf_contact:
+      position:
+        x: 0
+        y: 100
+      tempMetlId: 4
+    Join:
+      position:
+        x: 300
+        y: 0
+      tempMetlId: 1
