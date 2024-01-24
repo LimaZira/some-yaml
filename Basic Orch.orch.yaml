@@ -10,6 +10,6 @@ design:
   components:
     Start:
       position:
-        x: -130
+        x: -170
         "y": -20
       tempMetlId: 1

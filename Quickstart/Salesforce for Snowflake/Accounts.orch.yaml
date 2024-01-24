@@ -17,9 +17,6 @@ pipeline:
         componentName: "Start"
     Sync:
       type: "and"
-      transitions:
-        unconditional:
-        - "Run Transformation"
       parameters:
         componentName: "Sync"
     Salesforce UserRole:
@@ -215,6 +212,7 @@ pipeline:
         dataSelection:
         - "Id"
         - "Name"
+        - "AccountId"
         dataSourceFilter:
         combineFilters: "And"
         limit: "100"
@@ -228,13 +226,6 @@ pipeline:
         stagePlatform: "Snowflake Managed"
         loadOptions:
         autoDebug: "Off"
-    Run Transformation:
-      type: "run-transformation"
-      parameters:
-        componentName: "Run Transformation"
-        transformationJob: "Quickstart/Salesforce for Snowflake/Accounts TX"
-        setScalarVariables:
-        setGridVariables:
   variables:
     SalesforceOAuthName:
       metadata:
@@ -290,8 +281,3 @@ design:
         x: 150
         "y": 300
       tempMetlId: 9
-    Run Transformation:
-      position:
-        x: 420
-        "y": 0
-      tempMetlId: 10

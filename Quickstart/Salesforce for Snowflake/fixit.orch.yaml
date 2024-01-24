@@ -6,17 +6,17 @@ pipeline:
       type: "start"
       transitions:
         unconditional:
-        - "Salesforce Contact"
+        - "Salesforce Query"
       parameters:
         componentName: "Start"
-    Salesforce Contact:
+    Salesforce Query:
       type: "salesforce-query"
       parameters:
-        componentName: "Salesforce Contact"
+        componentName: "Salesforce Query"
         basicAdvancedMode: "Basic"
         authenticationMethod: "OAuth"
         useSandbox: "No"
-        authentication: "${SalesforceOAuthName}"
+        authentication: "Salesforce-2024"
         connectionOptions:
         dataSource: "Contact"
         dataSelection:
@@ -36,23 +36,15 @@ pipeline:
         stagePlatform: "Snowflake Managed"
         loadOptions:
         autoDebug: "Off"
-  variables:
-    SalesforceOAuthName:
-      metadata:
-        type: "TEXT"
-        description: "Name of your Salesforce OAuth"
-        scope: "COPIED"
-        visibility: "PRIVATE"
-      defaultValue: "Salesforce-2024"
 design:
   components:
     Start:
       position:
-        x: 0
-        "y": 0
+        x: -60
+        "y": -10
       tempMetlId: 1
-    Salesforce Contact:
+    Salesforce Query:
       position:
-        x: 160
+        x: 130
         "y": -10
       tempMetlId: 2

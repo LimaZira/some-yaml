@@ -30,6 +30,7 @@ pipeline:
       sources:
       - "mtln_qs_sf_account"
       - "mtln_qs_sf_user"
+      - "mtln_qs_sf_contact"
       parameters:
         componentName: "Join"
         mainTable: "mtln_qs_sf_account"
@@ -75,6 +76,26 @@ pipeline:
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_report"
         orderBy:
+    mtln_qs_sf_contact:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_contact"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
+        columnNames:
+        - "Id"
+        - "Name"
+        timeOffset:
+    mtln_qs_sf_contact 2:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_contact 2"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
+        columnNames:
+        timeOffset:
 design:
   components:
     mtln_qs_sf_user:
@@ -102,3 +123,13 @@ design:
         x: 950
         "y": 110
       tempMetlId: 5
+    mtln_qs_sf_contact:
+      position:
+        x: 440
+        "y": 110
+      tempMetlId: 6
+    mtln_qs_sf_contact 2:
+      position:
+        x: 240
+        "y": 130
+      tempMetlId: 7
