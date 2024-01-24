@@ -46,7 +46,7 @@ pipeline:
         - - "\"acc\".\"Name\" = \"u1\".\"Name\""
           - "acc_Left_u1"
         - - "\"cnt3\".\"AccountId\" = \"acc\".\"Id\""
-          - "acc_Left_cnt3"
+- "acc_Left_cnt3"
     Report Filters:
       type: "filter"
       sources:
