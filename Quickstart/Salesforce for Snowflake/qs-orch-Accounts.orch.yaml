@@ -15,20 +15,6 @@ pipeline:
         - "Salesforce Contact"
       parameters:
         componentName: "Start"
-    Sync:
-      type: "and"
-      transitions:
-        success:
-        - "Build integrated report"
-      parameters:
-        componentName: "Sync"
-    Build integrated report:
-      type: "run-transformation"
-      parameters:
-        componentName: "Build integrated report"
-        transformationJob: "qs-tran-Accounts.tran.yaml"
-        setScalarVariables:
-        setGridVariables:
     Salesforce Account:
       type: "salesforce-query"
       transitions:
@@ -47,20 +33,17 @@ pipeline:
         - "Name"
         - "OwnerId"
         - "Company_Data__c"
-        - "Partner__c"
-        - "BillingCountry"
-        - "BillingState"
         dataSourceFilter:
         combineFilters: "And"
         limit: ""
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
         database: "[Environment Default]"
+        primaryKeys:
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_account"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_account"
+        type: "Standard"
+        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce UserRole:
@@ -81,15 +64,15 @@ pipeline:
         - "Name"
         dataSourceFilter:
         combineFilters: "And"
-        limit:
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
+        limit: ""
         database: "[Environment Default]"
+        primaryKeys:
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_userrole"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_userrole"
+        type: "Standard"
+        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Asset:
@@ -110,15 +93,15 @@ pipeline:
         - "Name"
         dataSourceFilter:
         combineFilters: "And"
-        limit:
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
+        limit: ""
         database: "[Environment Default]"
+        primaryKeys:
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_asset"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_asset"
+        type: "Standard"
+        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce User:
@@ -139,15 +122,15 @@ pipeline:
         - "Name"
         dataSourceFilter:
         combineFilters: "And"
-        limit:
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
+        limit: ""
         database: "[Environment Default]"
+        primaryKeys:
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_user"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_user"
+        type: "Standard"
+        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Product2:
@@ -168,15 +151,15 @@ pipeline:
         - "Name"
         dataSourceFilter:
         combineFilters: "And"
-        limit:
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
+        limit: ""
         database: "[Environment Default]"
+        primaryKeys:
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_product2"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_product2"
+        type: "Standard"
+        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Partner:
@@ -199,15 +182,15 @@ pipeline:
         - "Role"
         dataSourceFilter:
         combineFilters: "And"
-        limit:
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
+        limit: ""
         database: "[Environment Default]"
+        primaryKeys:
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_partner"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_partner"
+        type: "Standard"
+        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Contact:
@@ -228,17 +211,31 @@ pipeline:
         - "Name"
         dataSourceFilter:
         combineFilters: "And"
-        limit:
-        type: "Standard"
-        primaryKeys:
-        warehouse: "[Environment Default]"
+        limit: ""
         database: "[Environment Default]"
+        primaryKeys:
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_contact"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_contact"
+        type: "Standard"
+        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
+    Sync:
+      type: "and"
+      transitions:
+        success:
+        - "Build integrated report"
+      parameters:
+        componentName: "Sync"
+    Build integrated report:
+      type: "run-transformation"
+      parameters:
+        componentName: "Build integrated report"
+        transformationJob: "qs-tran-Accounts.tran.yaml"
+        setScalarVariables:
+        setGridVariables:
   variables:
     SalesforceOAuthName:
       metadata:
@@ -246,56 +243,56 @@ pipeline:
         description: "Name of your Salesforce OAuth"
         scope: "COPIED"
         visibility: "PRIVATE"
-      defaultValue: "Salesforce-2024"
+      defaultValue: "Your-Salesforce-OAuth-name"
 design:
   components:
     Start:
       position:
         x: 0
-        "y": 0
+        y: 0
       tempMetlId: 1
-    Sync:
-      position:
-        x: 300
-        "y": 0
-      tempMetlId: 2
-    Build integrated report:
-      position:
-        x: 450
-        "y": 0
-      tempMetlId: 3
     Salesforce Account:
       position:
         x: 150
-        "y": -300
+        y: -300
       tempMetlId: 4
     Salesforce UserRole:
       position:
         x: 150
-        "y": -200
+        y: -200
       tempMetlId: 5
     Salesforce Asset:
       position:
         x: 150
-        "y": -100
+        y: -100
       tempMetlId: 6
     Salesforce User:
       position:
         x: 150
-        "y": 0
+        y: 0
       tempMetlId: 7
     Salesforce Product2:
       position:
         x: 150
-        "y": 100
+        y: 100
       tempMetlId: 8
     Salesforce Partner:
       position:
         x: 150
-        "y": 200
+        y: 200
       tempMetlId: 9
     Salesforce Contact:
       position:
         x: 150
-        "y": 300
+        y: 300
       tempMetlId: 10
+    Sync:
+      position:
+        x: 300
+        y: 0
+      tempMetlId: 2
+    Build integrated report:
+      position:
+        x: 450
+        y: 0
+      tempMetlId: 3
