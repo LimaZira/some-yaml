@@ -11,6 +11,20 @@ pipeline:
         - "Salesforce Contact"
       parameters:
         componentName: "Start"
+    Sync:
+      type: "and"
+      transitions:
+        success:
+        - "Build integrated report"
+      parameters:
+        componentName: "Sync"
+    Build integrated report:
+      type: "run-transformation"
+      parameters:
+        componentName: "Build integrated report"
+        transformationJob: "qs-sf-accounts-with-primary-contact-tran"
+        setScalarVariables:
+        setGridVariables:
     Salesforce Account:
       type: "salesforce-query"
       transitions:
@@ -37,14 +51,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: ""
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_account"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce User:
@@ -66,14 +80,14 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: ""
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_user"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_user"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Contact:
@@ -95,30 +109,16 @@ pipeline:
         dataSourceFilter:
         combineFilters: "And"
         limit: ""
-        database: "[Environment Default]"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_contact"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
-    Sync:
-      type: "and"
-      transitions:
-        success:
-        - "Build integrated report"
-      parameters:
-        componentName: "Sync"
-    Build integrated report:
-      type: "run-transformation"
-      parameters:
-        componentName: "Build integrated report"
-        transformationJob: "qs-sf-accounts-with-primary-contact-tran"
-        setScalarVariables:
-        setGridVariables:
   variables:
     SalesforceOAuthName:
       metadata:
@@ -126,36 +126,47 @@ pipeline:
         description: "Name of your Salesforce OAuth"
         scope: "COPIED"
         visibility: "PRIVATE"
-      defaultValue: "Your-Salesforce-OAuth-name"
+      defaultValue: "Salesforce-2024"
 design:
   components:
     Start:
       position:
         x: 0
-        y: 0
+        "y": 0
       tempMetlId: 1
-    Salesforce Account:
-      position:
-        x: 150
-        y: -100
-      tempMetlId: 4
-    Salesforce User:
-      position:
-        x: 150
-        y: 0
-      tempMetlId: 5
-    Salesforce Contact:
-      position:
-        x: 150
-        y: 100
-      tempMetlId: 6
     Sync:
       position:
         x: 300
-        y: 0
+        "y": 0
       tempMetlId: 2
     Build integrated report:
       position:
         x: 450
-        y: 0
+        "y": 0
       tempMetlId: 3
+    Salesforce Account:
+      position:
+        x: 150
+        "y": -100
+      tempMetlId: 4
+    Salesforce User:
+      position:
+        x: 150
+        "y": 0
+      tempMetlId: 5
+    Salesforce Contact:
+      position:
+        x: 150
+        "y": 100
+      tempMetlId: 6
+  notes:
+    "1":
+      position:
+        x: -270
+        "y": -170
+      size:
+        height: 128
+        width: 270
+      theme: "light-red"
+      content: "Please set the default value of the `SalesforceOAuthName` pipeline\
+        \ variable before running or validating"

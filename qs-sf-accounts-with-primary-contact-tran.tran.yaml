@@ -58,7 +58,6 @@ pipeline:
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_account"
-        timeOffset:
         columnNames:
         - "Id"
         - "Name"
@@ -69,6 +68,7 @@ pipeline:
         - "Partner__c"
         - "Primary_Contact__c"
         - "Secondary_Contact__c"
+        timeOffset:
     mtln_qs_sf_user:
       type: "table-input"
       parameters:
@@ -76,10 +76,10 @@ pipeline:
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_user"
-        timeOffset:
         columnNames:
         - "Id"
         - "Name"
+        timeOffset:
     mtln_qs_sf_contact:
       type: "table-input"
       parameters:
@@ -87,29 +87,73 @@ pipeline:
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_contact"
-        timeOffset:
         columnNames:
         - "Id"
         - "Name"
+        timeOffset:
+    Filter:
+      type: "filter"
+      sources:
+      - "Join"
+      parameters:
+        componentName: "Filter"
+        filterConditions:
+        - - "ccna1_Id"
+          - "Not"
+          - "Null or blank"
+          - ""
+        combineCondition: "And"
+    Rewrite mtln_qs_sf_accounts_with_primary_contact:
+      type: "rewrite-table"
+      sources:
+      - "Filter"
+      parameters:
+        componentName: "Rewrite mtln_qs_sf_accounts_with_primary_contact"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_accounts_with_primary_contact"
+        orderBy:
 design:
   components:
     Join:
       position:
-        x: 0
-        y: -150
+        x: 260
+        "y": 50
       tempMetlId: 1
     mtln_qs_sf_account:
       position:
         x: 0
-        y: -50
+        "y": -50
       tempMetlId: 2
     mtln_qs_sf_user:
       position:
         x: 0
-        y: 50
+        "y": 50
       tempMetlId: 3
     mtln_qs_sf_contact:
       position:
         x: 0
-        y: 150
+        "y": 150
       tempMetlId: 4
+    Filter:
+      position:
+        x: 410
+        "y": 50
+      tempMetlId: 5
+    Rewrite mtln_qs_sf_accounts_with_primary_contact:
+      position:
+        x: 580
+        "y": 50
+      tempMetlId: 6
+  notes:
+    "1":
+      position:
+        x: 340
+        "y": -60
+      size:
+        height: 238
+        width: 210
+      theme: "white"
+      content: "Add filters here if you want to apply them before the integrated report\
+        \ is generated"
