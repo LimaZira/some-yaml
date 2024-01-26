@@ -126,7 +126,7 @@ pipeline:
         description: "Name of your Salesforce OAuth"
         scope: "COPIED"
         visibility: "PRIVATE"
-      defaultValue: "Salesforce-2024"
+      defaultValue: "name-of-your-Salesforce-OAuth"
 design:
   components:
     Start:
