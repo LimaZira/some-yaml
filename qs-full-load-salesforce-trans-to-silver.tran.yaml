@@ -1,0 +1,238 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    mtln_qs_sf_account:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_account"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
+        columnNames:
+        - "Id"
+        - "Name"
+        - "AnnualRevenue"
+        - "LastModifiedDate"
+        timeOffset:
+    Rank:
+      type: "rank"
+      sources:
+      - "mtln_qs_sf_account"
+      parameters:
+        componentName: "Rank"
+        includeInputColumns: "Yes"
+        partitionData:
+        - "Id"
+        orderingWithinPartitions:
+        - - "LastModifiedDate"
+          - "Descending"
+        functions:
+        - - "Row Number"
+          - "rn"
+    Filter:
+      type: "filter"
+      sources:
+      - "Rank"
+      parameters:
+        componentName: "Filter"
+        filterConditions:
+        - - "rn"
+          - "Is"
+          - "Equal to"
+          - "1"
+        combineCondition: "And"
+    Rename:
+      type: "rename"
+      sources:
+      - "Filter"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "Id"
+          - "id"
+        - - "Name"
+          - "account_name"
+        - - "AnnualRevenue"
+          - "annual_revenue"
+        - - "LastModifiedDate"
+          - "last_modified_timestamp"
+        includeInputColumns: "No"
+    mtln_qs_sf_ods_account:
+      type: "table-update"
+      sources:
+      - "New SKs"
+      parameters:
+        componentName: "mtln_qs_sf_ods_account"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_ods_account"
+        targetAlias: "target"
+        sourceAlias: "input"
+        joinExpression:
+        - - "\"input\".\"id\" = \"target\".\"id\""
+          - "Case"
+        whenMatched:
+        - - "true"
+          - "Update"
+        updateMapping:
+        - - "account_name"
+          - "account_name"
+        - - "annual_revenue"
+          - "annual_revenue"
+        - - "last_modified_timestamp"
+          - "last_modified_timestamp"
+        includeNotMatched: "Yes"
+        insertMapping:
+        - - "surrogate_key"
+          - "surrogate_key"
+        - - "id"
+          - "id"
+        - - "account_name"
+          - "account_name"
+        - - "annual_revenue"
+          - "annual_revenue"
+        - - "last_modified_timestamp"
+          - "last_modified_timestamp"
+    mtln_qs_sf_ods_account 2:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_ods_account 2"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_ods_account"
+        columnNames:
+        - "surrogate_key"
+        timeOffset:
+    Aggregate:
+      type: "aggregate"
+      sources:
+      - "mtln_qs_sf_ods_account 2"
+      parameters:
+        componentName: "Aggregate"
+        groupings:
+        aggregations:
+        - - "surrogate_key"
+          - "Max"
+        groupingType: "Group By"
+    Calculator:
+      type: "calculator"
+      sources:
+      - "Aggregate"
+      parameters:
+        componentName: "Calculator"
+        includeInputColumns: "Yes"
+        calculations:
+        - - "COALESCE(\"max_surrogate_key\", 0)"
+          - "surrogate_key_base"
+    Rank 2:
+      type: "rank"
+      sources:
+      - "Rename"
+      parameters:
+        componentName: "Rank 2"
+        includeInputColumns: "Yes"
+        partitionData:
+        orderingWithinPartitions:
+        - - "id"
+          - "Ascending"
+        functions:
+        - - "Row Number"
+          - "surrogate_key_add"
+    Join:
+      type: "join"
+      sources:
+      - "Rank 2"
+      - "Calculator"
+      parameters:
+        componentName: "Join"
+        mainTable: "Rank 2"
+        mainTableAlias: "acc"
+        joins:
+        - - "Calculator"
+          - "sk"
+          - "Inner"
+        joinExpressions:
+        - - "1=1"
+          - "acc_Inner_sk"
+        columnMappings:
+        - - "acc.id"
+          - "id"
+        - - "acc.account_name"
+          - "account_name"
+        - - "acc.annual_revenue"
+          - "annual_revenue"
+        - - "acc.last_modified_timestamp"
+          - "last_modified_timestamp"
+        - - "acc.surrogate_key_add"
+          - "surrogate_key_add"
+        - - "sk.surrogate_key_base"
+          - "surrogate_key_base"
+    New SKs:
+      type: "calculator"
+      sources:
+      - "Join"
+      parameters:
+        componentName: "New SKs"
+        includeInputColumns: "Yes"
+        calculations:
+        - - "\"surrogate_key_add\" + \"surrogate_key_base\""
+          - "surrogate_key"
+design:
+  components:
+    mtln_qs_sf_account:
+      position:
+        x: -190
+        "y": -10
+      tempMetlId: 1
+    Rank:
+      position:
+        x: -60
+        "y": -10
+      tempMetlId: 2
+    Filter:
+      position:
+        x: 60
+        "y": -10
+      tempMetlId: 3
+    Rename:
+      position:
+        x: 190
+        "y": -10
+      tempMetlId: 4
+    mtln_qs_sf_ods_account:
+      position:
+        x: 810
+        "y": 60
+      tempMetlId: 5
+    mtln_qs_sf_ods_account 2:
+      position:
+        x: 60
+        "y": 130
+      tempMetlId: 6
+    Aggregate:
+      position:
+        x: 190
+        "y": 130
+      tempMetlId: 7
+    Calculator:
+      position:
+        x: 320
+        "y": 130
+      tempMetlId: 8
+    Rank 2:
+      position:
+        x: 320
+        "y": -10
+      tempMetlId: 9
+    Join:
+      position:
+        x: 500
+        "y": 60
+      tempMetlId: 10
+    New SKs:
+      position:
+        x: 650
+        "y": 60
+      tempMetlId: 11

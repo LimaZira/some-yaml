@@ -1,0 +1,163 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Salesforce Account (full bronze)"
+      parameters:
+        componentName: "Start"
+    Salesforce Account (full bronze):
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Create Silver ODS Table"
+      parameters:
+        componentName: "Salesforce Account (full bronze)"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Account"
+        dataSelection:
+        - "Id"
+        - "Name"
+        - "AnnualRevenue"
+        - "LastModifiedDate"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: ""
+        type: "Standard"
+        primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+        autoDebug: "Off"
+    Run qs-full-load-salesforce-trans-to-silver:
+      type: "run-transformation"
+      transitions:
+        success:
+        - "Run qs-full-load-salesforce-trans-to-gold"
+      parameters:
+        componentName: "Run qs-full-load-salesforce-trans-to-silver"
+        transformationJob: "qs-full-load-salesforce-trans-to-silver"
+        setScalarVariables:
+        setGridVariables:
+    Run qs-full-load-salesforce-trans-to-gold:
+      type: "run-transformation"
+      parameters:
+        componentName: "Run qs-full-load-salesforce-trans-to-gold"
+        transformationJob: "qs-full-load-salesforce-trans-to-gold"
+        setScalarVariables:
+        setGridVariables:
+    Create Silver ODS Table:
+      type: "create-table"
+      transitions:
+        success:
+        - "Run qs-full-load-salesforce-trans-to-silver"
+      parameters:
+        componentName: "Create Silver ODS Table"
+        createReplace: "Create if not exists"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        newTableName: "mtln_qs_sf_ods_account"
+        tableType: "Permanent"
+        columns:
+        - - "surrogate_key"
+          - "NUMBER"
+          - "12"
+          - "0"
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "id"
+          - "VARCHAR"
+          - "32"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "account_name"
+          - "VARCHAR"
+          - "1024"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "annual_revenue"
+          - "NUMBER"
+          - "20"
+          - "0"
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "last_modified_timestamp"
+          - "TIMESTAMP_NTZ"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+  variables:
+    SalesforceOAuthName:
+      metadata:
+        type: "TEXT"
+        description: "Name of your Salesforce OAuth"
+        scope: "COPIED"
+        visibility: "PUBLIC"
+      defaultValue: "Salesforce-2024"
+design:
+  components:
+    Start:
+      position:
+        x: -40
+        "y": 0
+      tempMetlId: 1
+    Salesforce Account (full bronze):
+      position:
+        x: 120
+        "y": 0
+      tempMetlId: 2
+    Run qs-full-load-salesforce-trans-to-silver:
+      position:
+        x: 450
+        "y": 0
+      tempMetlId: 3
+    Run qs-full-load-salesforce-trans-to-gold:
+      position:
+        x: 630
+        "y": 0
+      tempMetlId: 4
+    Create Silver ODS Table:
+      position:
+        x: 280
+        "y": 0
+      tempMetlId: 5
+  notes:
+    "1":
+      position:
+        x: -60
+        "y": -150
+      size:
+        height: 98
+        width: 320
+      theme: "light-red"
+      content: "Please set the default value of the `SalesforceOAuthName` pipeline\
+        \ variable before running or validating"
