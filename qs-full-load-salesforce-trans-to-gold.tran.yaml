@@ -101,3 +101,16 @@ design:
         x: 370
         "y": 70
       tempMetlId: 5
+  notes:
+    "2":
+      position:
+        x: -80
+        "y": -260
+      size:
+        height: 148
+        width: 540
+      theme: "light-green"
+      content: |-
+        **Silver** to **Gold** data transformations in the full load strategy.
+
+        The job creates a star schema for maximum consumability. It creates views for an Account dimension (type 1) and an Account fact table.

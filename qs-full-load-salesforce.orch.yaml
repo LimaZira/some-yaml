@@ -13,7 +13,7 @@ pipeline:
       type: "salesforce-query"
       transitions:
         success:
-        - "Create Silver ODS Table"
+        - "Create sequence"
       parameters:
         componentName: "Salesforce Account (full bronze)"
         basicAdvancedMode: "Basic"
@@ -74,16 +74,16 @@ pipeline:
           - "NUMBER"
           - "12"
           - "0"
-          - ""
-          - "No"
-          - "No"
+          - "\"mtln_qs_sf_ods_account_seq\".NEXTVAL"
+          - "Yes"
+          - "Yes"
           - ""
         - - "id"
           - "VARCHAR"
           - "32"
           - ""
           - ""
-          - "No"
+          - "Yes"
           - "No"
           - ""
         - - "account_name"
@@ -115,24 +115,32 @@ pipeline:
         clusteringKeys:
         dataRetentionTimeInDays:
         comment:
+    Create sequence:
+      type: "sql-script"
+      transitions:
+        success:
+        - "Create Silver ODS Table"
+      parameters:
+        componentName: "Create sequence"
+        sqlScript: "CREATE SEQUENCE IF NOT EXISTS \"mtln_qs_sf_ods_account_seq\""
   variables:
     SalesforceOAuthName:
       metadata:
         type: "TEXT"
         description: "Name of your Salesforce OAuth"
         scope: "COPIED"
-        visibility: "PUBLIC"
-      defaultValue: "Salesforce-2024"
+        visibility: "PRIVATE"
+      defaultValue: "name-of-your-Salesforce-OAuth"
 design:
   components:
     Start:
       position:
-        x: -40
+        x: -140
         "y": 0
       tempMetlId: 1
     Salesforce Account (full bronze):
       position:
-        x: 120
+        x: 10
         "y": 0
       tempMetlId: 2
     Run qs-full-load-salesforce-trans-to-silver:
@@ -147,17 +155,31 @@ design:
       tempMetlId: 4
     Create Silver ODS Table:
       position:
-        x: 280
+        x: 300
         "y": 0
       tempMetlId: 5
+    Create sequence:
+      position:
+        x: 160
+        "y": 0
+      tempMetlId: 6
   notes:
     "1":
       position:
-        x: -60
-        "y": -150
+        x: -100
+        "y": -140
       size:
         height: 98
         width: 320
       theme: "light-red"
       content: "Please set the default value of the `SalesforceOAuthName` pipeline\
-        \ variable before running or validating"
+        \ variable before validating or running"
+    "2":
+      position:
+        x: -280
+        "y": -260
+      size:
+        height: 98
+        width: 340
+      theme: "light-green"
+      content: "Full load strategy medallion schema example for Snowflake"
