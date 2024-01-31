@@ -104,6 +104,7 @@ pipeline:
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_accounts_with_contacts"
         warehouse: "[Environment Default]"
+        orderBy:
 design:
   components:
     mtln_qs_sf_account:
