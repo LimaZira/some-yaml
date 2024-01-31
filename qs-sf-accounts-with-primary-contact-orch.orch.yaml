@@ -170,3 +170,12 @@ design:
       theme: "light-red"
       content: "Please set the default value of the `SalesforceOAuthName` pipeline\
         \ variable before running or validating"
+    "2":
+      position:
+        x: -250
+        "y": 110
+      size:
+        height: 58
+        width: 300
+      theme: "light-green"
+      content: "The other note"
