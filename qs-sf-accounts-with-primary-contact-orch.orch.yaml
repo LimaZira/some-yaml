@@ -168,7 +168,7 @@ design:
         height: 128
         width: 270
       theme: "light-red"
-      content: "Please set the default value of the `SalesforceOAuthName` pipeline\
+      content: "Please set the default value of the `SalesforceOAuthName` pipelinez\
         \ variable before running or validating"
     "2":
       position:
