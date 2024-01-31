@@ -55,12 +55,12 @@ pipeline:
           - "Left"
         - - "mtln_qs_sf_contact"
           - "cnta3"
-          - "Left"
+          - "Inner"
         joinExpressions:
         - - "\"ccna1\".\"OwnerId\" = \"sra2\".\"Id\""
           - "ccna1_Left_sra2"
         - - "\"ccna1\".\"Id\" = \"cnta3\".\"AccountId\""
-          - "ccna1_Left_cnta3"
+          - "ccna1_Inner_cnta3"
         columnMappings:
         - - "ccna1.Id"
           - "ccna1_Id"
@@ -150,11 +150,11 @@ design:
         ted report is generated"
     2:
       position:
-        x: -250
+        x: -350
         y: -100
       size:
-        height: 250
-        width: 200
+        height: 300
+        width: 100
       theme: "white"
       content: "Add your own Table Inputs here to customize the integration with your \
         own data"
