@@ -94,23 +94,33 @@ pipeline:
           - "Null or blank"
           - ""
         combineCondition: "And"
+    Rewrite mtln_qs_sf_accounts_with_contacts:
+      type: "rewrite-table"
+      sources:
+      - "Filter"
+      parameters:
+        componentName: "Rewrite mtln_qs_sf_accounts_with_contacts"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_accounts_with_contacts"
+        warehouse: "[Environment Default]"
 design:
   components:
     mtln_qs_sf_account:
       position:
         x: 0
         y: -100
-      tempMetlId: 3
+      tempMetlId: 4
     mtln_qs_sf_user:
       position:
         x: 0
         y: 0
-      tempMetlId: 4
+      tempMetlId: 5
     mtln_qs_sf_contact:
       position:
         x: 0
         y: 100
-      tempMetlId: 5
+      tempMetlId: 6
     Join:
       position:
         x: 150
@@ -121,3 +131,8 @@ design:
         x: 300
         y: 0
       tempMetlId: 2
+    Rewrite mtln_qs_sf_accounts_with_contacts:
+      position:
+        x: 450
+        y: 0
+      tempMetlId: 3
