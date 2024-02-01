@@ -60,7 +60,7 @@ pipeline:
         - - "\"ccna1\".\"Id\" = \"ccna2\".\"AccountId\""
           - "ccna1_Inner_ccna2"
         - - "\"ccna2\".\"UserId\" = \"sra3\".\"Id\""
-          - "ccna2_Inner_sra3"
+          - "ccna1_Inner_sra3"
         columnMappings:
         - - "ccna1.Id"
           - "ccna1_Id"
