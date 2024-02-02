@@ -135,7 +135,7 @@ design:
   components:
     Start:
       position:
-        x: -140
+        x: -150
         "y": 0
       tempMetlId: 1
     Salesforce Account (full bronze):
