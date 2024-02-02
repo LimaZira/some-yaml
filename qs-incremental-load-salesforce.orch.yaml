@@ -156,7 +156,7 @@ pipeline:
         description: "Name of your Salesforce OAuth"
         scope: "COPIED"
         visibility: "PRIVATE"
-      defaultValue: "Salesforce-2024"
+      defaultValue: "Your-Salesforce-OAuth-name"
     HighWaterMark:
       metadata:
         type: "TEXT"
