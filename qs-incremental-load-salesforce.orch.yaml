@@ -6,16 +6,16 @@ pipeline:
       type: "start"
       transitions:
         unconditional:
-        - "Salesforce Account (full bronze)"
+        - "Create sequence"
       parameters:
         componentName: "Start"
-    Salesforce Account (full bronze):
+    Salesforce Account (incremental bronze):
       type: "salesforce-query"
       transitions:
         success:
-        - "Create sequence"
+        - "Bronze-to-Silver"
       parameters:
-        componentName: "Salesforce Account (full bronze)"
+        componentName: "Salesforce Account (incremental bronze)"
         basicAdvancedMode: "Basic"
         authenticationMethod: "OAuth"
         useSandbox: "No"
@@ -28,6 +28,10 @@ pipeline:
         - "AnnualRevenue"
         - "LastModifiedDate"
         dataSourceFilter:
+        - - "LastModifiedDate"
+          - "Is"
+          - "Greater than"
+          - "${HighWaterMark}"
         combineFilters: "And"
         limit: ""
         type: "Standard"
@@ -40,28 +44,28 @@ pipeline:
         stagePlatform: "Snowflake Managed"
         loadOptions:
         autoDebug: "Off"
-    Run qs-full-load-salesforce-trans-to-silver:
+    Bronze-to-Silver:
       type: "run-transformation"
       transitions:
         success:
-        - "Run qs-full-load-salesforce-trans-to-gold"
+        - "Silver-to-Gold"
       parameters:
-        componentName: "Run qs-full-load-salesforce-trans-to-silver"
-        transformationJob: "qs-full-load-salesforce-trans-to-silver"
+        componentName: "Bronze-to-Silver"
+        transformationJob: "qs-incremental-load-salesforce-trans-to-silver"
         setScalarVariables:
         setGridVariables:
-    Run qs-full-load-salesforce-trans-to-gold:
+    Silver-to-Gold:
       type: "run-transformation"
       parameters:
-        componentName: "Run qs-full-load-salesforce-trans-to-gold"
-        transformationJob: "qs-full-load-salesforce-trans-to-gold"
+        componentName: "Silver-to-Gold"
+        transformationJob: "qs-incremental-load-salesforce-trans-to-gold"
         setScalarVariables:
         setGridVariables:
     Create Silver ODS Table:
       type: "create-table"
       transitions:
         success:
-        - "Run qs-full-load-salesforce-trans-to-silver"
+        - "Set HighWaterMark"
       parameters:
         componentName: "Create Silver ODS Table"
         createReplace: "Create if not exists"
@@ -123,6 +127,28 @@ pipeline:
       parameters:
         componentName: "Create sequence"
         sqlScript: "CREATE SEQUENCE IF NOT EXISTS \"mtln_qs_sf_ods_account_seq\""
+    Set HighWaterMark:
+      type: "query-to-scalar"
+      transitions:
+        success:
+        - "Print HighWaterMark"
+        - "Salesforce Account (incremental bronze)"
+      parameters:
+        componentName: "Set HighWaterMark"
+        mode: "Advanced"
+        query: "SELECT COALESCE(TO_CHAR(MAX(\"last_modified_timestamp\"), 'YYYY-MM-DD\
+          \ HH24:MI:SS'), '1990-01-01 00:00:00') AS HWM\r\nFROM \"mtln_qs_sf_ods_account\""
+        scalarVariableMapping:
+        - - "HighWaterMark"
+          - "HWM"
+    Print HighWaterMark:
+      type: "print-variables"
+      parameters:
+        componentName: "Print HighWaterMark"
+        variablesToPrint:
+        - - "HighWaterMark"
+        prefixText:
+        includeVariableName: "No"
   variables:
     SalesforceOAuthName:
       metadata:
@@ -130,43 +156,61 @@ pipeline:
         description: "Name of your Salesforce OAuth"
         scope: "COPIED"
         visibility: "PRIVATE"
-      defaultValue: "name-of-your-Salesforce-OAuth"
+      defaultValue: "Salesforce-2024"
+    HighWaterMark:
+      metadata:
+        type: "TEXT"
+        description: "The maximum last_modified_timestamp from the ODS table, as YYYY-MM-DD\
+          \ HH24:MI:SS"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: "1990-01-01 00:00:00"
 design:
   components:
     Start:
       position:
-        x: -140
+        x: -180
         "y": 0
       tempMetlId: 1
-    Salesforce Account (full bronze):
+    Salesforce Account (incremental bronze):
       position:
-        x: 10
+        x: 430
         "y": 0
       tempMetlId: 2
-    Run qs-full-load-salesforce-trans-to-silver:
+    Bronze-to-Silver:
       position:
-        x: 450
+        x: 600
         "y": 0
       tempMetlId: 3
-    Run qs-full-load-salesforce-trans-to-gold:
+    Silver-to-Gold:
       position:
-        x: 630
+        x: 740
         "y": 0
       tempMetlId: 4
     Create Silver ODS Table:
       position:
-        x: 300
+        x: 70
         "y": 0
       tempMetlId: 5
     Create sequence:
       position:
-        x: 160
+        x: -60
         "y": 0
       tempMetlId: 6
+    Set HighWaterMark:
+      position:
+        x: 260
+        "y": 0
+      tempMetlId: 7
+    Print HighWaterMark:
+      position:
+        x: 330
+        "y": 110
+      tempMetlId: 8
   notes:
     "1":
       position:
-        x: 340
+        x: 330
         "y": -130
       size:
         height: 98
@@ -182,4 +226,4 @@ design:
         height: 98
         width: 340
       theme: "light-green"
-      content: "Full load strategy medallion schema example for Snowflake"
+      content: "Incremental load strategy medallion schema example for Snowflake"
