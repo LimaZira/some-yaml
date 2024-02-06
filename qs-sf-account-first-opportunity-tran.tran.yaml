@@ -2,43 +2,6 @@ type: "transformation"
 version: "1.0"
 pipeline:
   components:
-    mtln_qs_sf_account:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_account"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_account"
-        timeOffset:
-        columnNames:
-        - "Id"
-        - "Name"
-        - "OwnerId"
-        - "BillingCountry"
-        - "BillingState"
-    mtln_qs_sf_user:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_user"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_user"
-        timeOffset:
-        columnNames:
-        - "Id"
-        - "Name"
-    mtln_qs_sf_opportunity:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_opportunity"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_opportunity"
-        timeOffset:
-        columnNames:
-        - "Id"
-        - "AccountId"
-        - "Name"
     Join:
       type: "join"
       sources:
@@ -82,10 +45,12 @@ pipeline:
           - "ppra3_AccountId"
         - - "ppra3.Name"
           - "ppra3_Name"
+        - - "ppra3.CreatedDate"
+          - "ppra3_CreatedDate"
     Filter:
       type: "filter"
       sources:
-      - "Join"
+      - "Rank Ascending"
       parameters:
         componentName: "Filter"
         filterConditions:
@@ -93,68 +58,165 @@ pipeline:
           - "Not"
           - "Null or blank"
           - ""
+        - - "rn"
+          - "Is"
+          - "Equal to"
+          - "1"
         combineCondition: "And"
     Rewrite mtln_qs_sf_account_first_opportunity:
       type: "rewrite-table"
       sources:
-      - "Filter"
+      - "Rename"
       parameters:
         componentName: "Rewrite mtln_qs_sf_account_first_opportunity"
+        warehouse: "[Environment Default]"
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_account_first_opportunity"
-        warehouse: "[Environment Default]"
         orderBy:
+    mtln_qs_sf_account:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_account"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
+        columnNames:
+        - "Id"
+        - "Name"
+        - "OwnerId"
+        - "BillingCountry"
+        - "BillingState"
+        timeOffset:
+    mtln_qs_sf_user:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_user"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_user"
+        columnNames:
+        - "Id"
+        - "Name"
+        timeOffset:
+    mtln_qs_sf_opportunity:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_opportunity"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_opportunity"
+        columnNames:
+        - "Id"
+        - "AccountId"
+        - "Name"
+        - "CreatedDate"
+        timeOffset:
+    Rank Ascending:
+      type: "rank"
+      sources:
+      - "Join"
+      parameters:
+        componentName: "Rank Ascending"
+        includeInputColumns: "Yes"
+        partitionData:
+        - "ccna1_Id"
+        orderingWithinPartitions:
+        - - "ppra3_CreatedDate"
+          - "Ascending"
+        functions:
+        - - "Row Number"
+          - "rn"
+    Rename:
+      type: "rename"
+      sources:
+      - "Filter"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "ccna1_Id"
+          - "ccna1_Id"
+        - - "ccna1_Name"
+          - "ccna1_Name"
+        - - "ccna1_OwnerId"
+          - "ccna1_OwnerId"
+        - - "ccna1_BillingCountry"
+          - "ccna1_BillingCountry"
+        - - "ccna1_BillingState"
+          - "ccna1_BillingState"
+        - - "sra2_Id"
+          - "sra2_Id"
+        - - "sra2_Name"
+          - "sra2_Name"
+        - - "ppra3_Id"
+          - "ppra3_Id"
+        - - "ppra3_AccountId"
+          - "ppra3_AccountId"
+        - - "ppra3_Name"
+          - "ppra3_Name"
+        - - "ppra3_CreatedDate"
+          - "ppra3_CreatedDate"
+        includeInputColumns: "No"
 design:
   components:
+    Join:
+      position:
+        x: 150
+        "y": 0
+      tempMetlId: 1
+    Filter:
+      position:
+        x: 450
+        "y": 0
+      tempMetlId: 2
+    Rewrite mtln_qs_sf_account_first_opportunity:
+      position:
+        x: 760
+        "y": 0
+      tempMetlId: 3
     mtln_qs_sf_account:
       position:
         x: 0
-        y: -100
+        "y": -100
       tempMetlId: 4
     mtln_qs_sf_user:
       position:
         x: 0
-        y: 0
+        "y": 0
       tempMetlId: 5
     mtln_qs_sf_opportunity:
       position:
         x: 0
-        y: 100
+        "y": 100
       tempMetlId: 6
-    Join:
-      position:
-        x: 150
-        y: 0
-      tempMetlId: 1
-    Filter:
+    Rank Ascending:
       position:
         x: 300
-        y: 0
-      tempMetlId: 2
-    Rewrite mtln_qs_sf_account_first_opportunity:
+        "y": 0
+      tempMetlId: 7
+    Rename:
       position:
-        x: 450
-        y: 0
-      tempMetlId: 3
+        x: 610
+        "y": 0
+      tempMetlId: 8
   notes:
-    1:
+    "1":
       position:
-        x: 200
-        y: -130
+        x: 350
+        "y": -130
       size:
         height: 200
         width: 240
       theme: "white"
-      content: "Add your own filters here if you want to apply them before the integra\
-        ted report is generated"
-    2:
+      content: "Add your own filters here if you want to apply them before the integrated\
+        \ report is generated"
+    "2":
       position:
         x: -370
-        y: -100
+        "y": -100
       size:
         height: 100
         width: 300
       theme: "white"
-      content: "Add your own Table Inputs here to customize the integration with your \
-        own data"
+      content: "Add your own Table Inputs here to customize the integration with your\
+        \ own data"
