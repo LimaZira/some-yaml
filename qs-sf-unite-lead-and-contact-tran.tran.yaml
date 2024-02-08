@@ -1,0 +1,122 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    mtln_qs_sf_contact:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_contact"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
+        timeOffset:
+        columnNames:
+        - "Id"
+        - "Name"
+    mtln_qs_sf_lead:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_lead"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_lead"
+        timeOffset:
+        columnNames:
+        - "Id"
+        - "Name"
+    Join:
+      type: "join"
+      sources:
+      - "mtln_qs_sf_contact"
+      - "mtln_qs_sf_lead"
+      parameters:
+        componentName: "Join"
+        mainTable: "mtln_qs_sf_contact"
+        mainTableAlias: "cnta1"
+        joins:
+        - - "mtln_qs_sf_lead"
+          - "lda2"
+          - "Inner"
+        joinExpressions:
+        - - "\"cnta1\".\"ZZZ\" = \"lda2\".\"ZZZZ\""
+          - "cnta1_Inner_lda2"
+        columnMappings:
+        - - "cnta1.Id"
+          - "cnta1_Id"
+        - - "cnta1.Name"
+          - "cnta1_Name"
+        - - "lda2.Id"
+          - "lda2_Id"
+        - - "lda2.Name"
+          - "lda2_Name"
+    Filter:
+      type: "filter"
+      sources:
+      - "Join"
+      parameters:
+        componentName: "Filter"
+        filterConditions:
+        - - "cnta1_Id"
+          - "Not"
+          - "Null or blank"
+          - ""
+        combineCondition: "And"
+    Rewrite mtln_qs_sf_unite_lead_and_contact:
+      type: "rewrite-table"
+      sources:
+      - "Filter"
+      parameters:
+        componentName: "Rewrite mtln_qs_sf_unite_lead_and_contact"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_unite_lead_and_contact"
+        warehouse: "[Environment Default]"
+        orderBy:
+design:
+  components:
+    mtln_qs_sf_contact:
+      position:
+        x: 0
+        y: -50
+      tempMetlId: 4
+    mtln_qs_sf_lead:
+      position:
+        x: 0
+        y: 50
+      tempMetlId: 5
+    Join:
+      position:
+        x: 150
+        y: 0
+      tempMetlId: 1
+    Filter:
+      position:
+        x: 300
+        y: 0
+      tempMetlId: 2
+    Rewrite mtln_qs_sf_unite_lead_and_contact:
+      position:
+        x: 450
+        y: 0
+      tempMetlId: 3
+  notes:
+    1:
+      position:
+        x: 200
+        y: -130
+      size:
+        height: 200
+        width: 240
+      theme: "white"
+      content: "Add your own filters here if you want to apply them before the integra\
+        ted report is generated"
+    2:
+      position:
+        x: -370
+        y: -100
+      size:
+        height: 100
+        width: 300
+      theme: "white"
+      content: "Add your own Table Inputs here to customize the integration with your \
+        own data"
