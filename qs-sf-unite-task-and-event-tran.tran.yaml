@@ -87,7 +87,7 @@ pipeline:
     Calculator:
       type: "calculator"
       sources:
-      - "mtln_qs_sf_task"
+      - "Join"
       parameters:
         componentName: "Calculator"
         includeInputColumns: "Yes"
@@ -96,8 +96,6 @@ pipeline:
           - "ActivityType"
     Calculator 2:
       type: "calculator"
-      sources:
-      - "mtln_qs_sf_event"
       parameters:
         componentName: "Calculator 2"
         includeInputColumns: "Yes"
@@ -296,6 +294,89 @@ pipeline:
         - "Id"
         - "Name"
         timeOffset:
+    Join:
+      type: "join"
+      sources:
+      - "mtln_qs_sf_task"
+      - "mtln_qs_sf_record_type (task)"
+      parameters:
+        componentName: "Join"
+        mainTable: "mtln_qs_sf_task"
+        mainTableAlias: "t"
+        joins:
+        - - "mtln_qs_sf_record_type (task)"
+          - "rty"
+          - "Left"
+        joinExpressions:
+        - - "\"rty\".\"Id\" = \"t\".\"RecordTypeId\""
+          - "t_Left_rty"
+        columnMappings:
+        - - "t.Id"
+          - "Id"
+        - - "t.AccountId"
+          - "AccountId"
+        - - "t.ActivityDate"
+          - "ActivityDate"
+        - - "t.CreatedById"
+          - "CreatedById"
+        - - "t.CreatedDate"
+          - "CreatedDate"
+        - - "t.CurrencyIsoCode"
+          - "CurrencyIsoCode"
+        - - "t.Description"
+          - "Description"
+        - - "t.IsArchived"
+          - "IsArchived"
+        - - "t.IsDeleted"
+          - "IsDeleted"
+        - - "t.IsRecurrence"
+          - "IsRecurrence"
+        - - "t.IsReminderSet"
+          - "IsReminderSet"
+        - - "t.LastModifiedById"
+          - "LastModifiedById"
+        - - "t.LastModifiedDate"
+          - "LastModifiedDate"
+        - - "t.OwnerId"
+          - "OwnerId"
+        - - "t.RecordTypeId"
+          - "RecordTypeId"
+        - - "t.RecurrenceActivityId"
+          - "RecurrenceActivityId"
+        - - "t.RecurrenceDayOfMonth"
+          - "RecurrenceDayOfMonth"
+        - - "t.RecurrenceDayOfWeekMask"
+          - "RecurrenceDayOfWeekMask"
+        - - "t.RecurrenceEndDateOnly"
+          - "RecurrenceEndDateOnly"
+        - - "t.RecurrenceInstance"
+          - "RecurrenceInstance"
+        - - "t.RecurrenceInterval"
+          - "RecurrenceInterval"
+        - - "t.RecurrenceMonthOfYear"
+          - "RecurrenceMonthOfYear"
+        - - "t.RecurrenceTimeZoneSidKey"
+          - "RecurrenceTimeZoneSidKey"
+        - - "t.RecurrenceType"
+          - "RecurrenceType"
+        - - "t.ReminderDateTime"
+          - "ReminderDateTime"
+        - - "t.Subject"
+          - "Subject"
+        - - "t.SystemModstamp"
+          - "SystemModstamp"
+        - - "t.Type"
+          - "Type"
+        - - "t.WhatCount"
+          - "WhatCount"
+        - - "t.WhatId"
+          - "WhatId"
+        - - "t.WhoCount"
+          - "WhoCount"
+        - - "t.WhoId"
+          - "WhoId"
+        - - "rty.Name"
+          - "RecordTypeName"
 design:
   components:
     mtln_qs_sf_task:
@@ -310,32 +391,32 @@ design:
       tempMetlId: 5
     Calculator:
       position:
-        x: 120
+        x: 240
         "y": -50
       tempMetlId: 6
     Calculator 2:
       position:
-        x: 120
+        x: 240
         "y": 50
       tempMetlId: 7
     Rename:
       position:
-        x: 240
+        x: 370
         "y": -50
       tempMetlId: 8
     Rename 2:
       position:
-        x: 240
+        x: 370
         "y": 50
       tempMetlId: 9
     Unite:
       position:
-        x: 360
+        x: 520
         "y": 0
       tempMetlId: 10
     Rewrite mtln_qs_sf_activity:
       position:
-        x: 480
+        x: 640
         "y": 0
       tempMetlId: 11
     mtln_qs_sf_record_type (task):
@@ -348,6 +429,11 @@ design:
         x: 0
         "y": 150
       tempMetlId: 13
+    Join:
+      position:
+        x: 120
+        "y": -50
+      tempMetlId: 14
   notes:
     "1":
       position:
