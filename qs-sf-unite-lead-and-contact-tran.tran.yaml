@@ -321,3 +321,16 @@ design:
         x: 240
         "y": -50
       tempMetlId: 18
+  notes:
+    "1":
+      position:
+        x: -320
+        "y": -90
+      size:
+        height: 238
+        width: 270
+      theme: "white"
+      content: |-
+        Id becomes PersonId in the target table. For Contacts the same column is also stored as ContactId.
+
+        For Leads, ConvertedAccountId becomes the AccountId and ConvertedContactId becomes ContactId.

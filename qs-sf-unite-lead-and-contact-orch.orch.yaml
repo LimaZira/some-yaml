@@ -64,7 +64,7 @@ pipeline:
         - "AccountId"
         dataSourceFilter:
         combineFilters: "And"
-        limit: "200"
+        limit: ""
         type: "Standard"
         primaryKeys:
         warehouse: "[Environment Default]"
@@ -123,7 +123,7 @@ pipeline:
         - "ConvertedContactId"
         dataSourceFilter:
         combineFilters: "And"
-        limit: "100"
+        limit: ""
         type: "Standard"
         primaryKeys:
         warehouse: "[Environment Default]"
