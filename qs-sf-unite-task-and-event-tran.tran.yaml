@@ -96,6 +96,8 @@ pipeline:
           - "ActivityType"
     Calculator 2:
       type: "calculator"
+      sources:
+      - "Join 2"
       parameters:
         componentName: "Calculator 2"
         includeInputColumns: "Yes"
@@ -175,6 +177,8 @@ pipeline:
           - "WhoId"
         - - "ActivityType"
           - "ActivityType"
+        - - "RecordTypeName"
+          - "RecordTypeName"
         includeInputColumns: "No"
     Rename 2:
       type: "rename"
@@ -249,6 +253,8 @@ pipeline:
           - "WhoId"
         - - "ActivityType"
           - "ActivityType"
+        - - "RecordTypeName"
+          - "RecordTypeName"
         includeInputColumns: "No"
     Unite:
       type: "unite"
@@ -377,6 +383,89 @@ pipeline:
           - "WhoId"
         - - "rty.Name"
           - "RecordTypeName"
+    Join 2:
+      type: "join"
+      sources:
+      - "mtln_qs_sf_event"
+      - "mtln_qs_sf_record_type (event)"
+      parameters:
+        componentName: "Join 2"
+        mainTable: "mtln_qs_sf_event"
+        mainTableAlias: "e"
+        joins:
+        - - "mtln_qs_sf_record_type (event)"
+          - "rty"
+          - "Left"
+        joinExpressions:
+        - - "\"rty\".\"Id\" = \"e\".\"RecordTypeId\""
+          - "e_Left_rty"
+        columnMappings:
+        - - "e.Id"
+          - "Id"
+        - - "e.AccountId"
+          - "AccountId"
+        - - "e.ActivityDate"
+          - "ActivityDate"
+        - - "e.CreatedById"
+          - "CreatedById"
+        - - "e.CreatedDate"
+          - "CreatedDate"
+        - - "e.CurrencyIsoCode"
+          - "CurrencyIsoCode"
+        - - "e.Description"
+          - "Description"
+        - - "e.IsArchived"
+          - "IsArchived"
+        - - "e.IsDeleted"
+          - "IsDeleted"
+        - - "e.IsRecurrence"
+          - "IsRecurrence"
+        - - "e.IsReminderSet"
+          - "IsReminderSet"
+        - - "e.LastModifiedById"
+          - "LastModifiedById"
+        - - "e.LastModifiedDate"
+          - "LastModifiedDate"
+        - - "e.OwnerId"
+          - "OwnerId"
+        - - "e.RecordTypeId"
+          - "RecordTypeId"
+        - - "e.RecurrenceActivityId"
+          - "RecurrenceActivityId"
+        - - "e.RecurrenceDayOfMonth"
+          - "RecurrenceDayOfMonth"
+        - - "e.RecurrenceDayOfWeekMask"
+          - "RecurrenceDayOfWeekMask"
+        - - "e.RecurrenceEndDateOnly"
+          - "RecurrenceEndDateOnly"
+        - - "e.RecurrenceInstance"
+          - "RecurrenceInstance"
+        - - "e.RecurrenceInterval"
+          - "RecurrenceInterval"
+        - - "e.RecurrenceMonthOfYear"
+          - "RecurrenceMonthOfYear"
+        - - "e.RecurrenceTimeZoneSidKey"
+          - "RecurrenceTimeZoneSidKey"
+        - - "e.RecurrenceType"
+          - "RecurrenceType"
+        - - "e.ReminderDateTime"
+          - "ReminderDateTime"
+        - - "e.Subject"
+          - "Subject"
+        - - "e.SystemModstamp"
+          - "SystemModstamp"
+        - - "e.Type"
+          - "Type"
+        - - "e.WhatCount"
+          - "WhatCount"
+        - - "e.WhatId"
+          - "WhatId"
+        - - "e.WhoCount"
+          - "WhoCount"
+        - - "e.WhoId"
+          - "WhoId"
+        - - "rty.Name"
+          - "RecordTypeName"
 design:
   components:
     mtln_qs_sf_task:
@@ -421,12 +510,12 @@ design:
       tempMetlId: 11
     mtln_qs_sf_record_type (task):
       position:
-        x: 0
+        x: -40
         "y": -150
       tempMetlId: 12
     mtln_qs_sf_record_type (event):
       position:
-        x: 0
+        x: -40
         "y": 150
       tempMetlId: 13
     Join:
@@ -434,6 +523,11 @@ design:
         x: 120
         "y": -50
       tempMetlId: 14
+    Join 2:
+      position:
+        x: 120
+        "y": 50
+      tempMetlId: 15
   notes:
     "1":
       position:
