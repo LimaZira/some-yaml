@@ -1,0 +1,190 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Salesforce Task"
+        - "Salesforce Event"
+      parameters:
+        componentName: "Start"
+    Salesforce Task:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Task"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Task"
+        dataSelection:
+        - "Id"
+        - "AccountId"
+        - "ActivityDate"
+        - "CreatedById"
+        - "CreatedDate"
+        - "CurrencyIsoCode"
+        - "Description"
+        - "IsArchived"
+        - "IsDeleted"
+        - "IsRecurrence"
+        - "IsReminderSet"
+        - "LastModifiedById"
+        - "LastModifiedDate"
+        - "OwnerId"
+        - "RecordTypeId"
+        - "RecurrenceActivityId"
+        - "RecurrenceDayOfMonth"
+        - "RecurrenceDayOfWeekMask"
+        - "RecurrenceEndDateOnly"
+        - "RecurrenceInstance"
+        - "RecurrenceInterval"
+        - "RecurrenceMonthOfYear"
+        - "RecurrenceTimeZoneSidKey"
+        - "RecurrenceType"
+        - "ReminderDateTime"
+        - "Subject"
+        - "SystemModstamp"
+        - "Type"
+        - "WhatCount"
+        - "WhatId"
+        - "WhoCount"
+        - "WhoId"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: ""
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_task"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Event:
+      type: "salesforce-query"
+      transitions:
+        success:
+        - "Sync"
+      parameters:
+        componentName: "Salesforce Event"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "${SalesforceOAuthName}"
+        connectionOptions:
+        dataSource: "Event"
+        dataSelection:
+        - "Id"
+        - "AccountId"
+        - "ActivityDate"
+        - "CreatedById"
+        - "CreatedDate"
+        - "CurrencyIsoCode"
+        - "Description"
+        - "IsArchived"
+        - "IsDeleted"
+        - "IsRecurrence"
+        - "IsReminderSet"
+        - "LastModifiedById"
+        - "LastModifiedDate"
+        - "OwnerId"
+        - "RecordTypeId"
+        - "RecurrenceActivityId"
+        - "RecurrenceDayOfMonth"
+        - "RecurrenceDayOfWeekMask"
+        - "RecurrenceEndDateOnly"
+        - "RecurrenceInstance"
+        - "RecurrenceInterval"
+        - "RecurrenceMonthOfYear"
+        - "RecurrenceTimeZoneSidKey"
+        - "RecurrenceType"
+        - "ReminderDateTime"
+        - "Subject"
+        - "SystemModstamp"
+        - "Type"
+        - "WhatCount"
+        - "WhatId"
+        - "WhoCount"
+        - "WhoId"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: ""
+        database: "[Environment Default]"
+        primaryKeys:
+        schema: "[Environment Default]"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        targetTable: "mtln_qs_sf_event"
+        type: "Standard"
+        warehouse: "[Environment Default]"
+        loadOptions:
+        autoDebug: "Off"
+    Sync:
+      type: "and"
+      transitions:
+        success:
+        - "Build integrated report"
+      parameters:
+        componentName: "Sync"
+    Build integrated report:
+      type: "run-transformation"
+      parameters:
+        componentName: "Build integrated report"
+        transformationJob: "qs-sf-unite-task-and-event-tran"
+        setScalarVariables:
+        setGridVariables:
+  variables:
+    SalesforceOAuthName:
+      metadata:
+        type: "TEXT"
+        description: "Name of your Salesforce OAuth"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: "Your-Salesforce-OAuth-name"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        y: 0
+      tempMetlId: 1
+    Salesforce Task:
+      position:
+        x: 150
+        y: -50
+      tempMetlId: 4
+    Salesforce Event:
+      position:
+        x: 150
+        y: 50
+      tempMetlId: 5
+    Sync:
+      position:
+        x: 300
+        y: 0
+      tempMetlId: 2
+    Build integrated report:
+      position:
+        x: 450
+        y: 0
+      tempMetlId: 3
+  notes:
+    1:
+      position:
+        x: -300
+        y: -110
+      size:
+        height: 140
+        width: 270
+      theme: "light-red"
+      content: "Please set the default value of the `SalesforceOAuthName` pipeline var\
+        iable before running or validating"
