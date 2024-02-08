@@ -9,7 +9,6 @@ pipeline:
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_task"
-        timeOffset:
         columnNames:
         - "Id"
         - "AccountId"
@@ -43,6 +42,7 @@ pipeline:
         - "WhatId"
         - "WhoCount"
         - "WhoId"
+        timeOffset:
     mtln_qs_sf_event:
       type: "table-input"
       parameters:
@@ -50,7 +50,6 @@ pipeline:
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_event"
-        timeOffset:
         columnNames:
         - "Id"
         - "AccountId"
@@ -84,219 +83,246 @@ pipeline:
         - "WhatId"
         - "WhoCount"
         - "WhoId"
-    Join:
-      type: "join"
+        timeOffset:
+    Calculator:
+      type: "calculator"
       sources:
-      - "mtln_qs_sf_event"
       - "mtln_qs_sf_task"
       parameters:
-        componentName: "Join"
-        mainTable: "mtln_qs_sf_task"
-        mainTableAlias: "tska1"
-        joins:
-        - - "mtln_qs_sf_event"
-          - "vnta2"
-          - "Inner"
-        joinExpressions:
-        - - "\"tska1\".\"ZZZ\" = \"vnta2\".\"ZZZZ\""
-          - "tska1_Inner_vnta2"
-        columnMappings:
-        - - "tska1.Id"
-          - "tska1_Id"
-        - - "tska1.AccountId"
-          - "tska1_AccountId"
-        - - "tska1.ActivityDate"
-          - "tska1_ActivityDate"
-        - - "tska1.CreatedById"
-          - "tska1_CreatedById"
-        - - "tska1.CreatedDate"
-          - "tska1_CreatedDate"
-        - - "tska1.CurrencyIsoCode"
-          - "tska1_CurrencyIsoCode"
-        - - "tska1.Description"
-          - "tska1_Description"
-        - - "tska1.IsArchived"
-          - "tska1_IsArchived"
-        - - "tska1.IsDeleted"
-          - "tska1_IsDeleted"
-        - - "tska1.IsRecurrence"
-          - "tska1_IsRecurrence"
-        - - "tska1.IsReminderSet"
-          - "tska1_IsReminderSet"
-        - - "tska1.LastModifiedById"
-          - "tska1_LastModifiedById"
-        - - "tska1.LastModifiedDate"
-          - "tska1_LastModifiedDate"
-        - - "tska1.OwnerId"
-          - "tska1_OwnerId"
-        - - "tska1.RecordTypeId"
-          - "tska1_RecordTypeId"
-        - - "tska1.RecurrenceActivityId"
-          - "tska1_RecurrenceActivityId"
-        - - "tska1.RecurrenceDayOfMonth"
-          - "tska1_RecurrenceDayOfMonth"
-        - - "tska1.RecurrenceDayOfWeekMask"
-          - "tska1_RecurrenceDayOfWeekMask"
-        - - "tska1.RecurrenceEndDateOnly"
-          - "tska1_RecurrenceEndDateOnly"
-        - - "tska1.RecurrenceInstance"
-          - "tska1_RecurrenceInstance"
-        - - "tska1.RecurrenceInterval"
-          - "tska1_RecurrenceInterval"
-        - - "tska1.RecurrenceMonthOfYear"
-          - "tska1_RecurrenceMonthOfYear"
-        - - "tska1.RecurrenceTimeZoneSidKey"
-          - "tska1_RecurrenceTimeZoneSidKey"
-        - - "tska1.RecurrenceType"
-          - "tska1_RecurrenceType"
-        - - "tska1.ReminderDateTime"
-          - "tska1_ReminderDateTime"
-        - - "tska1.Subject"
-          - "tska1_Subject"
-        - - "tska1.SystemModstamp"
-          - "tska1_SystemModstamp"
-        - - "tska1.Type"
-          - "tska1_Type"
-        - - "tska1.WhatCount"
-          - "tska1_WhatCount"
-        - - "tska1.WhatId"
-          - "tska1_WhatId"
-        - - "tska1.WhoCount"
-          - "tska1_WhoCount"
-        - - "tska1.WhoId"
-          - "tska1_WhoId"
-        - - "vnta2.Id"
-          - "vnta2_Id"
-        - - "vnta2.AccountId"
-          - "vnta2_AccountId"
-        - - "vnta2.ActivityDate"
-          - "vnta2_ActivityDate"
-        - - "vnta2.CreatedById"
-          - "vnta2_CreatedById"
-        - - "vnta2.CreatedDate"
-          - "vnta2_CreatedDate"
-        - - "vnta2.CurrencyIsoCode"
-          - "vnta2_CurrencyIsoCode"
-        - - "vnta2.Description"
-          - "vnta2_Description"
-        - - "vnta2.IsArchived"
-          - "vnta2_IsArchived"
-        - - "vnta2.IsDeleted"
-          - "vnta2_IsDeleted"
-        - - "vnta2.IsRecurrence"
-          - "vnta2_IsRecurrence"
-        - - "vnta2.IsReminderSet"
-          - "vnta2_IsReminderSet"
-        - - "vnta2.LastModifiedById"
-          - "vnta2_LastModifiedById"
-        - - "vnta2.LastModifiedDate"
-          - "vnta2_LastModifiedDate"
-        - - "vnta2.OwnerId"
-          - "vnta2_OwnerId"
-        - - "vnta2.RecordTypeId"
-          - "vnta2_RecordTypeId"
-        - - "vnta2.RecurrenceActivityId"
-          - "vnta2_RecurrenceActivityId"
-        - - "vnta2.RecurrenceDayOfMonth"
-          - "vnta2_RecurrenceDayOfMonth"
-        - - "vnta2.RecurrenceDayOfWeekMask"
-          - "vnta2_RecurrenceDayOfWeekMask"
-        - - "vnta2.RecurrenceEndDateOnly"
-          - "vnta2_RecurrenceEndDateOnly"
-        - - "vnta2.RecurrenceInstance"
-          - "vnta2_RecurrenceInstance"
-        - - "vnta2.RecurrenceInterval"
-          - "vnta2_RecurrenceInterval"
-        - - "vnta2.RecurrenceMonthOfYear"
-          - "vnta2_RecurrenceMonthOfYear"
-        - - "vnta2.RecurrenceTimeZoneSidKey"
-          - "vnta2_RecurrenceTimeZoneSidKey"
-        - - "vnta2.RecurrenceType"
-          - "vnta2_RecurrenceType"
-        - - "vnta2.ReminderDateTime"
-          - "vnta2_ReminderDateTime"
-        - - "vnta2.Subject"
-          - "vnta2_Subject"
-        - - "vnta2.SystemModstamp"
-          - "vnta2_SystemModstamp"
-        - - "vnta2.Type"
-          - "vnta2_Type"
-        - - "vnta2.WhatCount"
-          - "vnta2_WhatCount"
-        - - "vnta2.WhatId"
-          - "vnta2_WhatId"
-        - - "vnta2.WhoCount"
-          - "vnta2_WhoCount"
-        - - "vnta2.WhoId"
-          - "vnta2_WhoId"
-    Filter:
-      type: "filter"
+        componentName: "Calculator"
+        includeInputColumns: "Yes"
+        calculations:
+        - - "'Task'"
+          - "ActivityType"
+    Calculator 2:
+      type: "calculator"
       sources:
-      - "Join"
+      - "mtln_qs_sf_event"
       parameters:
-        componentName: "Filter"
-        filterConditions:
-        - - "tska1_Id"
-          - "Not"
-          - "Null or blank"
-          - ""
-        combineCondition: "And"
-    Rewrite mtln_qs_sf_unite_task_and_event:
+        componentName: "Calculator 2"
+        includeInputColumns: "Yes"
+        calculations:
+        - - "'Event'"
+          - "ActivityType"
+    Rename:
+      type: "rename"
+      sources:
+      - "Calculator"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "Id"
+          - "ActivityId"
+        - - "AccountId"
+          - "AccountId"
+        - - "ActivityDate"
+          - "ActivityDate"
+        - - "CreatedById"
+          - "CreatedById"
+        - - "CreatedDate"
+          - "CreatedDate"
+        - - "CurrencyIsoCode"
+          - "CurrencyIsoCode"
+        - - "Description"
+          - "Description"
+        - - "IsArchived"
+          - "IsArchived"
+        - - "IsDeleted"
+          - "IsDeleted"
+        - - "IsRecurrence"
+          - "IsRecurrence"
+        - - "IsReminderSet"
+          - "IsReminderSet"
+        - - "LastModifiedById"
+          - "LastModifiedById"
+        - - "LastModifiedDate"
+          - "LastModifiedDate"
+        - - "OwnerId"
+          - "OwnerId"
+        - - "RecordTypeId"
+          - "RecordTypeId"
+        - - "RecurrenceActivityId"
+          - "RecurrenceActivityId"
+        - - "RecurrenceDayOfMonth"
+          - "RecurrenceDayOfMonth"
+        - - "RecurrenceDayOfWeekMask"
+          - "RecurrenceDayOfWeekMask"
+        - - "RecurrenceEndDateOnly"
+          - "RecurrenceEndDateOnly"
+        - - "RecurrenceInstance"
+          - "RecurrenceInstance"
+        - - "RecurrenceInterval"
+          - "RecurrenceInterval"
+        - - "RecurrenceMonthOfYear"
+          - "RecurrenceMonthOfYear"
+        - - "RecurrenceTimeZoneSidKey"
+          - "RecurrenceTimeZoneSidKey"
+        - - "RecurrenceType"
+          - "RecurrenceType"
+        - - "ReminderDateTime"
+          - "ReminderDateTime"
+        - - "Subject"
+          - "Subject"
+        - - "SystemModstamp"
+          - "SystemModstamp"
+        - - "Type"
+          - "Type"
+        - - "WhatCount"
+          - "WhatCount"
+        - - "WhatId"
+          - "WhatId"
+        - - "WhoCount"
+          - "WhoCount"
+        - - "WhoId"
+          - "WhoId"
+        - - "ActivityType"
+          - "ActivityType"
+        includeInputColumns: "No"
+    Rename 2:
+      type: "rename"
+      sources:
+      - "Calculator 2"
+      parameters:
+        componentName: "Rename 2"
+        columnMapping:
+        - - "Id"
+          - "ActivityId"
+        - - "AccountId"
+          - "AccountId"
+        - - "ActivityDate"
+          - "ActivityDate"
+        - - "CreatedById"
+          - "CreatedById"
+        - - "CreatedDate"
+          - "CreatedDate"
+        - - "CurrencyIsoCode"
+          - "CurrencyIsoCode"
+        - - "Description"
+          - "Description"
+        - - "IsArchived"
+          - "IsArchived"
+        - - "IsDeleted"
+          - "IsDeleted"
+        - - "IsRecurrence"
+          - "IsRecurrence"
+        - - "IsReminderSet"
+          - "IsReminderSet"
+        - - "LastModifiedById"
+          - "LastModifiedById"
+        - - "LastModifiedDate"
+          - "LastModifiedDate"
+        - - "OwnerId"
+          - "OwnerId"
+        - - "RecordTypeId"
+          - "RecordTypeId"
+        - - "RecurrenceActivityId"
+          - "RecurrenceActivityId"
+        - - "RecurrenceDayOfMonth"
+          - "RecurrenceDayOfMonth"
+        - - "RecurrenceDayOfWeekMask"
+          - "RecurrenceDayOfWeekMask"
+        - - "RecurrenceEndDateOnly"
+          - "RecurrenceEndDateOnly"
+        - - "RecurrenceInstance"
+          - "RecurrenceInstance"
+        - - "RecurrenceInterval"
+          - "RecurrenceInterval"
+        - - "RecurrenceMonthOfYear"
+          - "RecurrenceMonthOfYear"
+        - - "RecurrenceTimeZoneSidKey"
+          - "RecurrenceTimeZoneSidKey"
+        - - "RecurrenceType"
+          - "RecurrenceType"
+        - - "ReminderDateTime"
+          - "ReminderDateTime"
+        - - "Subject"
+          - "Subject"
+        - - "SystemModstamp"
+          - "SystemModstamp"
+        - - "Type"
+          - "Type"
+        - - "WhatCount"
+          - "WhatCount"
+        - - "WhatId"
+          - "WhatId"
+        - - "WhoCount"
+          - "WhoCount"
+        - - "WhoId"
+          - "WhoId"
+        - - "ActivityType"
+          - "ActivityType"
+        includeInputColumns: "No"
+    Unite:
+      type: "unite"
+      sources:
+      - "Rename"
+      - "Rename 2"
+      parameters:
+        componentName: "Unite"
+        method: "All Columns"
+        castTypes: "Yes"
+        addSourceComponentColumn: "No"
+        removeDuplicates: "No"
+    Rewrite mtln_qs_sf_activity:
       type: "rewrite-table"
       sources:
-      - "Filter"
+      - "Unite"
       parameters:
-        componentName: "Rewrite mtln_qs_sf_unite_task_and_event"
+        componentName: "Rewrite mtln_qs_sf_activity"
+        warehouse: "[Environment Default]"
         database: "[Environment Default]"
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_unite_task_and_event"
-        warehouse: "[Environment Default]"
+        targetTable: "mtln_qs_sf_activity"
         orderBy:
 design:
   components:
     mtln_qs_sf_task:
       position:
         x: 0
-        y: -50
+        "y": -50
       tempMetlId: 4
     mtln_qs_sf_event:
       position:
         x: 0
-        y: 50
+        "y": 50
       tempMetlId: 5
-    Join:
+    Calculator:
       position:
-        x: 150
-        y: 0
-      tempMetlId: 1
-    Filter:
+        x: 120
+        "y": -50
+      tempMetlId: 6
+    Calculator 2:
       position:
-        x: 300
-        y: 0
-      tempMetlId: 2
-    Rewrite mtln_qs_sf_unite_task_and_event:
+        x: 120
+        "y": 50
+      tempMetlId: 7
+    Rename:
       position:
-        x: 450
-        y: 0
-      tempMetlId: 3
+        x: 240
+        "y": -50
+      tempMetlId: 8
+    Rename 2:
+      position:
+        x: 240
+        "y": 50
+      tempMetlId: 9
+    Unite:
+      position:
+        x: 360
+        "y": 0
+      tempMetlId: 10
+    Rewrite mtln_qs_sf_activity:
+      position:
+        x: 480
+        "y": 0
+      tempMetlId: 11
   notes:
-    1:
+    "1":
       position:
-        x: 200
-        y: -130
+        x: -310
+        "y": -40
       size:
-        height: 200
-        width: 240
+        height: 108
+        width: 250
       theme: "white"
-      content: "Add your own filters here if you want to apply them before the integra\
-        ted report is generated"
-    2:
-      position:
-        x: -370
-        y: -100
-      size:
-        height: 100
-        width: 300
-      theme: "white"
-      content: "Add your own Table Inputs here to customize the integration with your \
-        own data"
+      content: "`Id`s become `ActivityId`s in the target table"
