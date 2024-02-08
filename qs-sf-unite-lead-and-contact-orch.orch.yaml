@@ -10,6 +10,13 @@ pipeline:
         - "Salesforce Lead"
       parameters:
         componentName: "Start"
+    Sync:
+      type: "and"
+      transitions:
+        unconditional:
+        - "Run qs-sf-unite-lead-and-contact-tran"
+      parameters:
+        componentName: "Sync"
     Salesforce Contact:
       type: "salesforce-query"
       transitions:
@@ -54,17 +61,18 @@ pipeline:
         - "Salutation"
         - "SystemModstamp"
         - "Title"
+        - "AccountId"
         dataSourceFilter:
         combineFilters: "And"
-        limit: ""
-        database: "[Environment Default]"
+        limit: "200"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_contact"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
     Salesforce Lead:
@@ -115,28 +123,21 @@ pipeline:
         - "ConvertedContactId"
         dataSourceFilter:
         combineFilters: "And"
-        limit: ""
-        database: "[Environment Default]"
+        limit: "100"
+        type: "Standard"
         primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
         schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_lead"
         stage: "[Custom]"
         stagePlatform: "Snowflake Managed"
-        targetTable: "mtln_qs_sf_lead"
-        type: "Standard"
-        warehouse: "[Environment Default]"
         loadOptions:
         autoDebug: "Off"
-    Sync:
-      type: "and"
-      transitions:
-        success:
-        - "Build integrated report"
-      parameters:
-        componentName: "Sync"
-    Build integrated report:
+    Run qs-sf-unite-lead-and-contact-tran:
       type: "run-transformation"
       parameters:
-        componentName: "Build integrated report"
+        componentName: "Run qs-sf-unite-lead-and-contact-tran"
         transformationJob: "qs-sf-unite-lead-and-contact-tran"
         setScalarVariables:
         setGridVariables:
@@ -153,36 +154,36 @@ design:
     Start:
       position:
         x: 0
-        y: 0
+        "y": 0
       tempMetlId: 1
+    Sync:
+      position:
+        x: 300
+        "y": 0
+      tempMetlId: 2
     Salesforce Contact:
       position:
         x: 150
-        y: -50
+        "y": -50
       tempMetlId: 4
     Salesforce Lead:
       position:
         x: 150
-        y: 50
+        "y": 50
       tempMetlId: 5
-    Sync:
+    Run qs-sf-unite-lead-and-contact-tran:
       position:
-        x: 300
-        y: 0
-      tempMetlId: 2
-    Build integrated report:
-      position:
-        x: 450
-        y: 0
-      tempMetlId: 3
+        x: 460
+        "y": 0
+      tempMetlId: 6
   notes:
-    1:
+    "1":
       position:
         x: -300
-        y: -110
+        "y": -110
       size:
         height: 140
         width: 270
       theme: "light-red"
-      content: "Please set the default value of the `SalesforceOAuthName` pipeline var\
-        iable before running or validating"
+      content: "Please set the default value of the `SalesforceOAuthName` pipeline\
+        \ variable before running or validating"

@@ -9,7 +9,6 @@ pipeline:
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_contact"
-        timeOffset:
         columnNames:
         - "Id"
         - "CreatedById"
@@ -41,6 +40,8 @@ pipeline:
         - "Salutation"
         - "SystemModstamp"
         - "Title"
+        - "AccountId"
+        timeOffset:
     mtln_qs_sf_lead:
       type: "table-input"
       parameters:
@@ -48,7 +49,6 @@ pipeline:
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_lead"
-        timeOffset:
         columnNames:
         - "Id"
         - "CreatedById"
@@ -82,215 +82,242 @@ pipeline:
         - "Title"
         - "ConvertedAccountId"
         - "ConvertedContactId"
-    Join:
-      type: "join"
+        timeOffset:
+    Calculator:
+      type: "calculator"
       sources:
-      - "mtln_qs_sf_contact"
       - "mtln_qs_sf_lead"
       parameters:
-        componentName: "Join"
-        mainTable: "mtln_qs_sf_contact"
-        mainTableAlias: "cnta1"
-        joins:
-        - - "mtln_qs_sf_lead"
-          - "lda2"
-          - "Inner"
-        joinExpressions:
-        - - "\"cnta1\".\"ZZZ\" = \"lda2\".\"ZZZZ\""
-          - "cnta1_Inner_lda2"
-        columnMappings:
-        - - "cnta1.Id"
-          - "cnta1_Id"
-        - - "cnta1.CreatedById"
-          - "cnta1_CreatedById"
-        - - "cnta1.CreatedDate"
-          - "cnta1_CreatedDate"
-        - - "cnta1.CurrencyIsoCode"
-          - "cnta1_CurrencyIsoCode"
-        - - "cnta1.Description"
-          - "cnta1_Description"
-        - - "cnta1.DoNotCall"
-          - "cnta1_DoNotCall"
-        - - "cnta1.Email"
-          - "cnta1_Email"
-        - - "cnta1.EmailBouncedDate"
-          - "cnta1_EmailBouncedDate"
-        - - "cnta1.EmailBouncedReason"
-          - "cnta1_EmailBouncedReason"
-        - - "cnta1.FirstName"
-          - "cnta1_FirstName"
-        - - "cnta1.HasOptedOutOfEmail"
-          - "cnta1_HasOptedOutOfEmail"
-        - - "cnta1.IndividualId"
-          - "cnta1_IndividualId"
-        - - "cnta1.IsDeleted"
-          - "cnta1_IsDeleted"
-        - - "cnta1.LastActivityDate"
-          - "cnta1_LastActivityDate"
-        - - "cnta1.LastModifiedById"
-          - "cnta1_LastModifiedById"
-        - - "cnta1.LastModifiedDate"
-          - "cnta1_LastModifiedDate"
-        - - "cnta1.LastName"
-          - "cnta1_LastName"
-        - - "cnta1.LastReferencedDate"
-          - "cnta1_LastReferencedDate"
-        - - "cnta1.LastViewedDate"
-          - "cnta1_LastViewedDate"
-        - - "cnta1.LeadSource"
-          - "cnta1_LeadSource"
-        - - "cnta1.MasterRecordId"
-          - "cnta1_MasterRecordId"
-        - - "cnta1.MobilePhone"
-          - "cnta1_MobilePhone"
-        - - "cnta1.Name"
-          - "cnta1_Name"
-        - - "cnta1.OwnerId"
-          - "cnta1_OwnerId"
-        - - "cnta1.Phone"
-          - "cnta1_Phone"
-        - - "cnta1.PhotoUrl"
-          - "cnta1_PhotoUrl"
-        - - "cnta1.RecordTypeId"
-          - "cnta1_RecordTypeId"
-        - - "cnta1.Salutation"
-          - "cnta1_Salutation"
-        - - "cnta1.SystemModstamp"
-          - "cnta1_SystemModstamp"
-        - - "cnta1.Title"
-          - "cnta1_Title"
-        - - "lda2.Id"
-          - "lda2_Id"
-        - - "lda2.CreatedById"
-          - "lda2_CreatedById"
-        - - "lda2.CreatedDate"
-          - "lda2_CreatedDate"
-        - - "lda2.CurrencyIsoCode"
-          - "lda2_CurrencyIsoCode"
-        - - "lda2.Description"
-          - "lda2_Description"
-        - - "lda2.DoNotCall"
-          - "lda2_DoNotCall"
-        - - "lda2.Email"
-          - "lda2_Email"
-        - - "lda2.EmailBouncedDate"
-          - "lda2_EmailBouncedDate"
-        - - "lda2.EmailBouncedReason"
-          - "lda2_EmailBouncedReason"
-        - - "lda2.FirstName"
-          - "lda2_FirstName"
-        - - "lda2.HasOptedOutOfEmail"
-          - "lda2_HasOptedOutOfEmail"
-        - - "lda2.IndividualId"
-          - "lda2_IndividualId"
-        - - "lda2.IsDeleted"
-          - "lda2_IsDeleted"
-        - - "lda2.LastActivityDate"
-          - "lda2_LastActivityDate"
-        - - "lda2.LastModifiedById"
-          - "lda2_LastModifiedById"
-        - - "lda2.LastModifiedDate"
-          - "lda2_LastModifiedDate"
-        - - "lda2.LastName"
-          - "lda2_LastName"
-        - - "lda2.LastReferencedDate"
-          - "lda2_LastReferencedDate"
-        - - "lda2.LastViewedDate"
-          - "lda2_LastViewedDate"
-        - - "lda2.LeadSource"
-          - "lda2_LeadSource"
-        - - "lda2.MasterRecordId"
-          - "lda2_MasterRecordId"
-        - - "lda2.MobilePhone"
-          - "lda2_MobilePhone"
-        - - "lda2.Name"
-          - "lda2_Name"
-        - - "lda2.OwnerId"
-          - "lda2_OwnerId"
-        - - "lda2.Phone"
-          - "lda2_Phone"
-        - - "lda2.PhotoUrl"
-          - "lda2_PhotoUrl"
-        - - "lda2.RecordTypeId"
-          - "lda2_RecordTypeId"
-        - - "lda2.Salutation"
-          - "lda2_Salutation"
-        - - "lda2.SystemModstamp"
-          - "lda2_SystemModstamp"
-        - - "lda2.Title"
-          - "lda2_Title"
-        - - "lda2.ConvertedAccountId"
-          - "lda2_ConvertedAccountId"
-        - - "lda2.ConvertedContactId"
-          - "lda2_ConvertedContactId"
-    Filter:
-      type: "filter"
+        componentName: "Calculator"
+        includeInputColumns: "Yes"
+        calculations:
+        - - "'Lead'"
+          - "PersonType"
+        - - "\"ConvertedAccountId\""
+          - "AccountId"
+        - - "\"ConvertedContactId\""
+          - "ContactId"
+    Calculator 2:
+      type: "calculator"
       sources:
-      - "Join"
+      - "mtln_qs_sf_contact"
       parameters:
-        componentName: "Filter"
-        filterConditions:
-        - - "cnta1_Id"
-          - "Not"
-          - "Null or blank"
-          - ""
-        combineCondition: "And"
-    Rewrite mtln_qs_sf_unite_lead_and_contact:
+        componentName: "Calculator 2"
+        includeInputColumns: "Yes"
+        calculations:
+        - - "'Contact'"
+          - "PersonType"
+        - - "\"Id\""
+          - "ContactId"
+    Unite:
+      type: "unite"
+      sources:
+      - "Rename"
+      - "Rename 2"
+      parameters:
+        componentName: "Unite"
+        method: "All Columns"
+        castTypes: "Yes"
+        addSourceComponentColumn: "No"
+        removeDuplicates: "No"
+    Rename:
+      type: "rename"
+      sources:
+      - "Calculator"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "Id"
+          - "PersonId"
+        - - "CreatedById"
+          - "CreatedById"
+        - - "CreatedDate"
+          - "CreatedDate"
+        - - "CurrencyIsoCode"
+          - "CurrencyIsoCode"
+        - - "Description"
+          - "Description"
+        - - "DoNotCall"
+          - "DoNotCall"
+        - - "Email"
+          - "Email"
+        - - "EmailBouncedDate"
+          - "EmailBouncedDate"
+        - - "EmailBouncedReason"
+          - "EmailBouncedReason"
+        - - "FirstName"
+          - "FirstName"
+        - - "HasOptedOutOfEmail"
+          - "HasOptedOutOfEmail"
+        - - "IndividualId"
+          - "IndividualId"
+        - - "IsDeleted"
+          - "IsDeleted"
+        - - "LastActivityDate"
+          - "LastActivityDate"
+        - - "LastModifiedById"
+          - "LastModifiedById"
+        - - "LastModifiedDate"
+          - "LastModifiedDate"
+        - - "LastName"
+          - "LastName"
+        - - "LastReferencedDate"
+          - "LastReferencedDate"
+        - - "LastViewedDate"
+          - "LastViewedDate"
+        - - "LeadSource"
+          - "LeadSource"
+        - - "MasterRecordId"
+          - "MasterRecordId"
+        - - "MobilePhone"
+          - "MobilePhone"
+        - - "Name"
+          - "Name"
+        - - "OwnerId"
+          - "OwnerId"
+        - - "Phone"
+          - "Phone"
+        - - "PhotoUrl"
+          - "PhotoUrl"
+        - - "RecordTypeId"
+          - "RecordTypeId"
+        - - "Salutation"
+          - "Salutation"
+        - - "SystemModstamp"
+          - "SystemModstamp"
+        - - "Title"
+          - "Title"
+        - - "PersonType"
+          - "PersonType"
+        - - "AccountId"
+          - "AccountId"
+        - - "ContactId"
+          - "ContactId"
+        includeInputColumns: "No"
+    Rewrite mtln_qs_sf_person:
       type: "rewrite-table"
       sources:
-      - "Filter"
+      - "Unite"
       parameters:
-        componentName: "Rewrite mtln_qs_sf_unite_lead_and_contact"
+        componentName: "Rewrite mtln_qs_sf_person"
+        warehouse: "[Environment Default]"
         database: "[Environment Default]"
         schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_unite_lead_and_contact"
-        warehouse: "[Environment Default]"
+        targetTable: "mtln_qs_sf_person"
         orderBy:
+    Rename 2:
+      type: "rename"
+      sources:
+      - "Calculator 2"
+      parameters:
+        componentName: "Rename 2"
+        columnMapping:
+        - - "Id"
+          - "PersonId"
+        - - "CreatedById"
+          - "CreatedById"
+        - - "CreatedDate"
+          - "CreatedDate"
+        - - "CurrencyIsoCode"
+          - "CurrencyIsoCode"
+        - - "Description"
+          - "Description"
+        - - "DoNotCall"
+          - "DoNotCall"
+        - - "Email"
+          - "Email"
+        - - "EmailBouncedDate"
+          - "EmailBouncedDate"
+        - - "EmailBouncedReason"
+          - "EmailBouncedReason"
+        - - "FirstName"
+          - "FirstName"
+        - - "HasOptedOutOfEmail"
+          - "HasOptedOutOfEmail"
+        - - "IndividualId"
+          - "IndividualId"
+        - - "IsDeleted"
+          - "IsDeleted"
+        - - "LastActivityDate"
+          - "LastActivityDate"
+        - - "LastModifiedById"
+          - "LastModifiedById"
+        - - "LastModifiedDate"
+          - "LastModifiedDate"
+        - - "LastName"
+          - "LastName"
+        - - "LastReferencedDate"
+          - "LastReferencedDate"
+        - - "LastViewedDate"
+          - "LastViewedDate"
+        - - "LeadSource"
+          - "LeadSource"
+        - - "MasterRecordId"
+          - "MasterRecordId"
+        - - "MobilePhone"
+          - "MobilePhone"
+        - - "Name"
+          - "Name"
+        - - "OwnerId"
+          - "OwnerId"
+        - - "Phone"
+          - "Phone"
+        - - "PhotoUrl"
+          - "PhotoUrl"
+        - - "RecordTypeId"
+          - "RecordTypeId"
+        - - "Salutation"
+          - "Salutation"
+        - - "SystemModstamp"
+          - "SystemModstamp"
+        - - "Title"
+          - "Title"
+        - - "AccountId"
+          - "AccountId"
+        - - "PersonType"
+          - "PersonType"
+        - - "ContactId"
+          - "ContactId"
+        includeInputColumns: "No"
 design:
   components:
     mtln_qs_sf_contact:
       position:
         x: 0
-        y: -50
+        "y": -50
       tempMetlId: 4
     mtln_qs_sf_lead:
       position:
         x: 0
-        y: 50
+        "y": 50
       tempMetlId: 5
-    Join:
+    Calculator:
       position:
-        x: 150
-        y: 0
-      tempMetlId: 1
-    Filter:
+        x: 120
+        "y": 50
+      tempMetlId: 7
+    Calculator 2:
       position:
-        x: 300
-        y: 0
-      tempMetlId: 2
-    Rewrite mtln_qs_sf_unite_lead_and_contact:
+        x: 120
+        "y": -50
+      tempMetlId: 10
+    Unite:
       position:
-        x: 450
-        y: 0
-      tempMetlId: 3
-  notes:
-    1:
+        x: 400
+        "y": 0
+      tempMetlId: 15
+    Rename:
       position:
-        x: 200
-        y: -130
-      size:
-        height: 200
-        width: 240
-      theme: "white"
-      content: "Add your own filters here if you want to apply them before the integra\
-        ted report is generated"
-    2:
+        x: 240
+        "y": 50
+      tempMetlId: 16
+    Rewrite mtln_qs_sf_person:
       position:
-        x: -370
-        y: -100
-      size:
-        height: 100
-        width: 300
-      theme: "white"
-      content: "Add your own Table Inputs here to customize the integration with your \
-        own data"
+        x: 540
+        "y": 0
+      tempMetlId: 17
+    Rename 2:
+      position:
+        x: 240
+        "y": -50
+      tempMetlId: 18
