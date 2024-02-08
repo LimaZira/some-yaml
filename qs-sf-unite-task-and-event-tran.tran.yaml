@@ -274,6 +274,28 @@ pipeline:
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_activity"
         orderBy:
+    mtln_qs_sf_record_type (task):
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_record_type (task)"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_record_type"
+        columnNames:
+        - "Id"
+        - "Name"
+        timeOffset:
+    mtln_qs_sf_record_type (event):
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_record_type (event)"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_record_type"
+        columnNames:
+        - "Id"
+        - "Name"
+        timeOffset:
 design:
   components:
     mtln_qs_sf_task:
@@ -316,6 +338,16 @@ design:
         x: 480
         "y": 0
       tempMetlId: 11
+    mtln_qs_sf_record_type (task):
+      position:
+        x: 0
+        "y": -150
+      tempMetlId: 12
+    mtln_qs_sf_record_type (event):
+      position:
+        x: 0
+        "y": 150
+      tempMetlId: 13
   notes:
     "1":
       position:
