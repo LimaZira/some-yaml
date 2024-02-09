@@ -12,11 +12,34 @@ pipeline:
         timeOffset:
         columnNames:
         - "Id"
+        - "CampaignId"
         - "ContactId"
         - "LeadId"
+        - "LeadOrContactId"
         - "Status"
+        - "Type"
         - "CreatedDate"
-        - "ClosedDate"
+        - "LastModifiedDate"
+        - "Name"
+        - "Description"
+    mtln_qs_sf_campaign:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_campaign"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_campaign"
+        timeOffset:
+        columnNames:
+        - "Id"
+        - "CreatedDate"
+        - "LastModifiedDate"
+        - "Name"
+        - "Description"
+        - "StartDate"
+        - "EndDate"
+        - "Status"
+        - "Type"
     mtln_qs_sf_contact:
       type: "table-input"
       parameters:
@@ -40,7 +63,9 @@ pipeline:
         columnNames:
         - "Id"
         - "Name"
+        - "ConvertedDate"
         - "ConvertedContactId"
+        - "ConvertedAccountId"
     mtln_qs_sf_account:
       type: "table-input"
       parameters:
@@ -54,10 +79,12 @@ pipeline:
         - "Name"
         - "BillingCountry"
         - "BillingState"
+        - "OwnerId"
     Join:
       type: "join"
       sources:
       - "mtln_qs_sf_account"
+      - "mtln_qs_sf_campaign"
       - "mtln_qs_sf_campaignmember"
       - "mtln_qs_sf_contact"
       - "mtln_qs_sf_lead"
@@ -66,55 +93,94 @@ pipeline:
         mainTable: "mtln_qs_sf_campaignmember"
         mainTableAlias: "cmpa1"
         joins:
-        - - "mtln_qs_sf_contact"
-          - "cnta2"
+        - - "mtln_qs_sf_campaign"
+          - "cmpa2"
           - "Inner"
+        - - "mtln_qs_sf_contact"
+          - "cnta3"
+          - "Left"
         - - "mtln_qs_sf_lead"
-          - "lda3"
+          - "lda4"
           - "Left"
         - - "mtln_qs_sf_account"
-          - "ccna4"
+          - "ccna5"
           - "Left"
         joinExpressions:
-        - - "\"cmpa1\".\"ContactId\" = \"cnta2\".\"Id\""
-          - "cmpa1_Inner_cnta2"
-        - - "\"cmpa1\".\"LeadId\" = \"lda3\".\"Id\""
-          - "cmpa1_Left_lda3"
-        - - "\"cnta2\".\"AccountId\" = \"ccna4\".\"Id\""
-          - "cmpa1_Left_ccna4"
+        - - "\"cmpa1\".\"CampaignId\" = \"cmpa2\".\"Id\""
+          - "cmpa1_Inner_cmpa2"
+        - - "\"cmpa1\".\"ContactId\" = \"cnta3\".\"Id\""
+          - "cmpa1_Left_cnta3"
+        - - "\"cmpa1\".\"LeadId\" = \"lda4\".\"Id\""
+          - "cmpa1_Left_lda4"
+        - - "\"cnta3\".\"AccountId\" = \"ccna5\".\"Id\""
+          - "cmpa1_Left_ccna5"
         columnMappings:
         - - "cmpa1.Id"
           - "cmpa1_Id"
+        - - "cmpa1.CampaignId"
+          - "cmpa1_CampaignId"
         - - "cmpa1.ContactId"
           - "cmpa1_ContactId"
         - - "cmpa1.LeadId"
           - "cmpa1_LeadId"
+        - - "cmpa1.LeadOrContactId"
+          - "cmpa1_LeadOrContactId"
         - - "cmpa1.Status"
           - "cmpa1_Status"
+        - - "cmpa1.Type"
+          - "cmpa1_Type"
         - - "cmpa1.CreatedDate"
           - "cmpa1_CreatedDate"
-        - - "cmpa1.ClosedDate"
-          - "cmpa1_ClosedDate"
-        - - "cnta2.Id"
-          - "cnta2_Id"
-        - - "cnta2.Name"
-          - "cnta2_Name"
-        - - "cnta2.AccountId"
-          - "cnta2_AccountId"
-        - - "lda3.Id"
-          - "lda3_Id"
-        - - "lda3.Name"
-          - "lda3_Name"
-        - - "lda3.ConvertedContactId"
-          - "lda3_ConvertedContactId"
-        - - "ccna4.Id"
-          - "ccna4_Id"
-        - - "ccna4.Name"
-          - "ccna4_Name"
-        - - "ccna4.BillingCountry"
-          - "ccna4_BillingCountry"
-        - - "ccna4.BillingState"
-          - "ccna4_BillingState"
+        - - "cmpa1.LastModifiedDate"
+          - "cmpa1_LastModifiedDate"
+        - - "cmpa1.Name"
+          - "cmpa1_Name"
+        - - "cmpa1.Description"
+          - "cmpa1_Description"
+        - - "cmpa2.Id"
+          - "cmpa2_Id"
+        - - "cmpa2.CreatedDate"
+          - "cmpa2_CreatedDate"
+        - - "cmpa2.LastModifiedDate"
+          - "cmpa2_LastModifiedDate"
+        - - "cmpa2.Name"
+          - "cmpa2_Name"
+        - - "cmpa2.Description"
+          - "cmpa2_Description"
+        - - "cmpa2.StartDate"
+          - "cmpa2_StartDate"
+        - - "cmpa2.EndDate"
+          - "cmpa2_EndDate"
+        - - "cmpa2.Status"
+          - "cmpa2_Status"
+        - - "cmpa2.Type"
+          - "cmpa2_Type"
+        - - "cnta3.Id"
+          - "cnta3_Id"
+        - - "cnta3.Name"
+          - "cnta3_Name"
+        - - "cnta3.AccountId"
+          - "cnta3_AccountId"
+        - - "lda4.Id"
+          - "lda4_Id"
+        - - "lda4.Name"
+          - "lda4_Name"
+        - - "lda4.ConvertedDate"
+          - "lda4_ConvertedDate"
+        - - "lda4.ConvertedContactId"
+          - "lda4_ConvertedContactId"
+        - - "lda4.ConvertedAccountId"
+          - "lda4_ConvertedAccountId"
+        - - "ccna5.Id"
+          - "ccna5_Id"
+        - - "ccna5.Name"
+          - "ccna5_Name"
+        - - "ccna5.BillingCountry"
+          - "ccna5_BillingCountry"
+        - - "ccna5.BillingState"
+          - "ccna5_BillingState"
+        - - "ccna5.OwnerId"
+          - "ccna5_OwnerId"
     Filter:
       type: "filter"
       sources:
@@ -143,23 +209,28 @@ design:
     mtln_qs_sf_campaignmember:
       position:
         x: 0
-        y: -150
+        y: -200
       tempMetlId: 4
+    mtln_qs_sf_campaign:
+      position:
+        x: 0
+        y: -100
+      tempMetlId: 5
     mtln_qs_sf_contact:
       position:
         x: 0
-        y: -50
-      tempMetlId: 5
+        y: 0
+      tempMetlId: 6
     mtln_qs_sf_lead:
       position:
         x: 0
-        y: 50
-      tempMetlId: 6
+        y: 100
+      tempMetlId: 7
     mtln_qs_sf_account:
       position:
         x: 0
-        y: 150
-      tempMetlId: 7
+        y: 200
+      tempMetlId: 8
     Join:
       position:
         x: 150
