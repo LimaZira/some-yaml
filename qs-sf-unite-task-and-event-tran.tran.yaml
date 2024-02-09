@@ -534,7 +534,7 @@ design:
         x: -310
         "y": -40
       size:
-        height: 108
+        height: 98
         width: 250
       theme: "white"
       content: "`Id`s become `ActivityId`s in the target table"

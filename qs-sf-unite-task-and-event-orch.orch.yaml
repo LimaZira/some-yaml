@@ -218,7 +218,7 @@ design:
         x: -300
         "y": -110
       size:
-        height: 140
+        height: 130
         width: 270
       theme: "light-red"
       content: "Please set the default value of the `SalesforceOAuthName` pipeline\
