@@ -2,66 +2,6 @@ type: "transformation"
 version: "1.0"
 pipeline:
   components:
-    mtln_qs_sf_opportunitycontactrole:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_opportunitycontactrole"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_opportunitycontactrole"
-        timeOffset:
-        columnNames:
-        - "Id"
-        - "ContactId"
-        - "OpportunityId"
-        - "Role"
-        - "IsPrimary"
-        - "CreatedDate"
-        - "LastModifiedDate"
-    mtln_qs_sf_opportunity:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_opportunity"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_opportunity"
-        timeOffset:
-        columnNames:
-        - "Id"
-        - "AccountId"
-        - "CloseDate"
-        - "StageName"
-        - "CreatedDate"
-        - "LastModifiedDate"
-        - "OwnerId"
-        - "Name"
-        - "Description"
-        - "Type"
-    mtln_qs_sf_contact:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_contact"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_contact"
-        timeOffset:
-        columnNames:
-        - "Id"
-        - "Name"
-    mtln_qs_sf_account:
-      type: "table-input"
-      parameters:
-        componentName: "mtln_qs_sf_account"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mtln_qs_sf_account"
-        timeOffset:
-        columnNames:
-        - "Id"
-        - "Name"
-        - "BillingCountry"
-        - "BillingState"
-        - "OwnerId"
     Join:
       type: "join"
       sources:
@@ -139,84 +79,144 @@ pipeline:
           - "ccna4_BillingState"
         - - "ccna4.OwnerId"
           - "ccna4_OwnerId"
-    Filter:
+    Primary Only:
       type: "filter"
       sources:
       - "Join"
       parameters:
-        componentName: "Filter"
+        componentName: "Primary Only"
         filterConditions:
-        - - "ppra1_Id"
-          - "Not"
-          - "Null or blank"
-          - ""
+        - - "ppra1_IsPrimary"
+          - "Is"
+          - "Equal to"
+          - "TrUe"
         combineCondition: "And"
     Rewrite mtln_qs_sf_opportunity_roles_and_contacts_all_primary:
       type: "rewrite-table"
       sources:
-      - "Filter"
+      - "Primary Only"
       parameters:
         componentName: "Rewrite mtln_qs_sf_opportunity_roles_and_contacts_all_primary"
+        warehouse: "[Environment Default]"
         database: "[Environment Default]"
         schema: "[Environment Default]"
         targetTable: "mtln_qs_sf_opportunity_roles_and_contacts_all_primary"
-        warehouse: "[Environment Default]"
         orderBy:
+    mtln_qs_sf_opportunitycontactrole:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_opportunitycontactrole"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_opportunitycontactrole"
+        columnNames:
+        - "Id"
+        - "ContactId"
+        - "OpportunityId"
+        - "Role"
+        - "IsPrimary"
+        - "CreatedDate"
+        - "LastModifiedDate"
+        timeOffset:
+    mtln_qs_sf_opportunity:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_opportunity"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_opportunity"
+        columnNames:
+        - "Id"
+        - "AccountId"
+        - "CloseDate"
+        - "StageName"
+        - "CreatedDate"
+        - "LastModifiedDate"
+        - "OwnerId"
+        - "Name"
+        - "Description"
+        - "Type"
+        timeOffset:
+    mtln_qs_sf_contact:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_contact"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_contact"
+        columnNames:
+        - "Id"
+        - "Name"
+        timeOffset:
+    mtln_qs_sf_account:
+      type: "table-input"
+      parameters:
+        componentName: "mtln_qs_sf_account"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mtln_qs_sf_account"
+        columnNames:
+        - "Id"
+        - "Name"
+        - "BillingCountry"
+        - "BillingState"
+        - "OwnerId"
+        timeOffset:
 design:
   components:
-    mtln_qs_sf_opportunitycontactrole:
-      position:
-        x: 0
-        y: -150
-      tempMetlId: 4
-    mtln_qs_sf_opportunity:
-      position:
-        x: 0
-        y: -50
-      tempMetlId: 5
-    mtln_qs_sf_contact:
-      position:
-        x: 0
-        y: 50
-      tempMetlId: 6
-    mtln_qs_sf_account:
-      position:
-        x: 0
-        y: 150
-      tempMetlId: 7
     Join:
       position:
         x: 150
-        y: 0
+        "y": 0
       tempMetlId: 1
-    Filter:
+    Primary Only:
       position:
         x: 300
-        y: 0
+        "y": 0
       tempMetlId: 2
     Rewrite mtln_qs_sf_opportunity_roles_and_contacts_all_primary:
       position:
         x: 450
-        y: 0
+        "y": 0
       tempMetlId: 3
+    mtln_qs_sf_opportunitycontactrole:
+      position:
+        x: 0
+        "y": -150
+      tempMetlId: 4
+    mtln_qs_sf_opportunity:
+      position:
+        x: 0
+        "y": -50
+      tempMetlId: 5
+    mtln_qs_sf_contact:
+      position:
+        x: 0
+        "y": 50
+      tempMetlId: 6
+    mtln_qs_sf_account:
+      position:
+        x: 0
+        "y": 150
+      tempMetlId: 7
   notes:
-    1:
+    "1":
       position:
         x: 200
-        y: -130
+        "y": -130
       size:
         height: 200
         width: 240
       theme: "white"
-      content: "Add your own filters here if you want to apply them before the integra\
-        ted report is generated"
-    2:
+      content: "Add your own filters here if you want to apply them before the integrated\
+        \ report is generated"
+    "2":
       position:
         x: -370
-        y: -100
+        "y": -100
       size:
         height: 100
         width: 300
       theme: "white"
-      content: "Add your own Table Inputs here to customize the integration with your \
-        own data"
+      content: "Add your own Table Inputs here to customize the integration with your\
+        \ own data"
