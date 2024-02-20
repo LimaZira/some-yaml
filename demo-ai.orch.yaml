@@ -1,0 +1,119 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Amazon Bedrock Prompt"
+        - "Azure OpenAI Prompt"
+        - "OpenAI Prompt"
+      parameters:
+        componentName: "Start"
+    Amazon Bedrock Prompt:
+      type: "ai-prompt"
+      parameters:
+        componentName: "Amazon Bedrock Prompt"
+        service:
+          provider: "Amazon Bedrock"
+          aws:
+            region:
+            modelCategory:
+        source:
+          snowflake:
+            database: "[Environment Default]"
+            schema: "[Environment Default]"
+            table:
+            keyColumn:
+            limit: "1000"
+        promptContext:
+          userContext:
+          inputs:
+          outputFormat: "TEXT"
+        destination:
+          snowflake:
+            database: "[Environment Default]"
+            schema: "[Environment Default]"
+            table:
+    Azure OpenAI Prompt:
+      type: "ai-prompt"
+      parameters:
+        componentName: "Azure OpenAI Prompt"
+        service:
+          provider: "Azure"
+          azure:
+            endpoint:
+            deploymentName:
+            apiKey:
+            temperature: "1"
+            "n": "1"
+            maxTokens:
+        source:
+          snowflake:
+            database: "[Environment Default]"
+            schema: "[Environment Default]"
+            table:
+            keyColumn:
+            limit: "1000"
+        promptContext:
+          userContext:
+          inputs:
+          outputFormat: "TEXT"
+        destination:
+          snowflake:
+            database: "[Environment Default]"
+            schema: "[Environment Default]"
+            table:
+            createTableOptions: "Fail if Table Exists"
+    OpenAI Prompt:
+      type: "ai-prompt"
+      parameters:
+        componentName: "OpenAI Prompt"
+        service:
+          provider: "OpenAI"
+          openAI:
+            model:
+            apiKey:
+            temperature: "1"
+            "n": "1"
+            maxTokens:
+        source:
+          snowflake:
+            database: "[Environment Default]"
+            schema: "[Environment Default]"
+            table:
+            keyColumn:
+            limit: "1000"
+        promptContext:
+          userContext:
+          inputs:
+          outputFormat: "TEXT"
+        destination:
+          snowflake:
+            database: "[Environment Default]"
+            schema: "[Environment Default]"
+            table:
+            createTableOptions: "Fail if Table Exists"
+design:
+  components:
+    Start:
+      position:
+        x: -420
+        "y": 10
+      tempMetlId: 1
+    Amazon Bedrock Prompt:
+      position:
+        x: -230
+        "y": -110
+      tempMetlId: 2
+    Azure OpenAI Prompt:
+      position:
+        x: -230
+        "y": 10
+      tempMetlId: 3
+    OpenAI Prompt:
+      position:
+        x: -230
+        "y": 140
+      tempMetlId: 4
