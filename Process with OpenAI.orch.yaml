@@ -66,6 +66,8 @@ pipeline:
             schema: "[Environment Default]"
             table: "BARISTA_REVIEWS_PROCESSED_OPENAI"
             createTableOptions: "Replace if Table Exists"
+        ragConfig:
+          isRagEnabled: "No"
     Truncate Table:
       type: "truncate-table"
       transitions:
