@@ -62,6 +62,14 @@ pipeline:
           - "No"
           - "No"
           - ""
+        - - "imagelinks"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
         defaultDdlCollation:
         primaryKeys:
         clusteringKeys:
@@ -99,7 +107,7 @@ pipeline:
         fieldOptionallyEnclosed: "\""
         nullIf:
         errorOnColumnCountMismatch: "False"
-        emptyFieldAsNull: "True"
+        emptyFieldAsNull: "False"
         replaceInvalidCharacters: "False"
         encodingType:
         onError: "Abort Statement"

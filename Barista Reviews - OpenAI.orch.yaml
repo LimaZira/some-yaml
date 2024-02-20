@@ -6,7 +6,7 @@ pipeline:
       type: "start"
       transitions:
         unconditional:
-        - "Truncate Table"
+        - "OpenAI Prompt"
       parameters:
         componentName: "Start"
     OpenAI Prompt:
@@ -25,7 +25,7 @@ pipeline:
           snowflake:
             database: "[Environment Default]"
             schema: "[Environment Default]"
-            table: "BARISTA_REVIEWS"
+            table: "STG_BARISTA_REVIEWS"
             keyColumn: "name"
             limit: ""
         promptContext:
@@ -68,18 +68,6 @@ pipeline:
             createTableOptions: "Replace if Table Exists"
         ragConfig:
           isRagEnabled: "No"
-    Truncate Table:
-      type: "truncate-table"
-      transitions:
-        unconditional:
-        - "OpenAI Prompt"
-      parameters:
-        componentName: "Truncate Table"
-        warehouse: "[Environment Default]"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable:
-        - "BARISTA_REVIEWS_PROCESSED"
 design:
   components:
     Start:
@@ -89,11 +77,28 @@ design:
       tempMetlId: 1
     OpenAI Prompt:
       position:
-        x: -610
+        x: -760
         "y": -90
       tempMetlId: 2
-    Truncate Table:
+  notes:
+    "1":
       position:
-        x: -790
-        "y": -90
-      tempMetlId: 3
+        x: -900
+        "y": 0
+      size:
+        height: 108
+        width: 400
+      theme: "light-green"
+      content: |-
+        Create `BARISTA_REVIEWS_PROCESSED_OPENAI` by processing the unstructured text using OpenAI.
+        This may take several minutes to run, depending on your settings.
+    "2":
+      position:
+        x: -900
+        "y": -210
+      size:
+        height: 88
+        width: 400
+      theme: "light-red"
+      content: "You must create a [Secret](https://docs.matillion.com/data-productivity-cloud/administration/docs/secrets-overview/)\
+        \ named `OpenAI-Key` which stores your OpenAI key securely"
