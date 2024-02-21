@@ -16,8 +16,8 @@ pipeline:
         service:
           provider: "Azure"
           azure:
-            endpoint: "https://hackathon-azure-openai.openai.azure.com/"
-            deploymentName: "gpt-35-turbo-16k"
+            endpoint: "https://????.openai.azure.com/"
+            deploymentName: ""
             apiKey: "OpenAI-Key"
             temperature: "1"
             "n": "1"
@@ -105,4 +105,4 @@ design:
       content: |-
         You must create a [Secret](https://docs.matillion.com/data-productivity-cloud/administration/docs/secrets-overview/) named `OpenAI-Key` which stores your OpenAI key securely.
 
-        Also set the Endpoint and Deployment Name in the AI Prompt
+        Also remember to set the Endpoint and Deployment Name in the AI Prompt
