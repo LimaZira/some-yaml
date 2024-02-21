@@ -6,7 +6,7 @@ pipeline:
       type: "start"
       transitions:
         unconditional:
-        - "Truncate Table"
+        - "Azure OpenAI Prompt"
       parameters:
         componentName: "Start"
     Azure OpenAI Prompt:
@@ -18,7 +18,7 @@ pipeline:
           azure:
             endpoint: "https://hackathon-azure-openai.openai.azure.com/"
             deploymentName: "gpt-35-turbo-16k"
-            apiKey: "AzureOpenAI-Key"
+            apiKey: "OpenAI-Key"
             temperature: "1"
             "n": "1"
             maxTokens:
@@ -26,7 +26,7 @@ pipeline:
           snowflake:
             database: "[Environment Default]"
             schema: "[Environment Default]"
-            table: "BARISTA_REVIEWS"
+            table: "STG_BARISTA_REVIEWS"
             keyColumn: "name"
             limit: ""
         promptContext:
@@ -67,18 +67,8 @@ pipeline:
             schema: "[Environment Default]"
             table: "BARISTA_REVIEWS_PROCESSED_AZUREOPENAI"
             createTableOptions: "Replace if Table Exists"
-    Truncate Table:
-      type: "truncate-table"
-      transitions:
-        unconditional:
-        - "Azure OpenAI Prompt"
-      parameters:
-        componentName: "Truncate Table"
-        warehouse: "[Environment Default]"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable:
-        - "BARISTA_REVIEWS_PROCESSED"
+        ragConfig:
+          isRagEnabled: "No"
 design:
   components:
     Start:
@@ -88,11 +78,19 @@ design:
       tempMetlId: 1
     Azure OpenAI Prompt:
       position:
-        x: -610
+        x: -730
         "y": -90
       tempMetlId: 2
-    Truncate Table:
+  notes:
+    "1":
       position:
-        x: -790
-        "y": -90
-      tempMetlId: 3
+        x: -950
+        "y": 0
+      size:
+        height: 118
+        width: 500
+      theme: "light-green"
+      content: |-
+        Create `BARISTA_REVIEWS_PROCESSED_AZUREOPENAI` by processing the unstructured text using OpenAI.
+
+        This may take several minutes to run, depending on your settings.
