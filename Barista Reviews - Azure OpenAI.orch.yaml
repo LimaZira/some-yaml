@@ -94,3 +94,15 @@ design:
         Create `BARISTA_REVIEWS_PROCESSED_AZUREOPENAI` by processing the unstructured text using OpenAI.
 
         This may take several minutes to run, depending on your settings.
+    "2":
+      position:
+        x: -950
+        "y": -260
+      size:
+        height: 128
+        width: 500
+      theme: "light-red"
+      content: |-
+        You must create a [Secret](https://docs.matillion.com/data-productivity-cloud/administration/docs/secrets-overview/) named `OpenAI-Key` which stores your OpenAI key securely.
+
+        Also set the Endpoint and Deployment Name in the AI Prompt
