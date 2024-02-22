@@ -1,0 +1,37 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    stg_aws_rss_feed:
+      type: "table-input"
+      parameters:
+        componentName: "stg_aws_rss_feed"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_aws_rss_feed"
+        columnNames:
+        - "channel"
+        timeOffset:
+    LATERAL FLATTEN:
+      type: "sql"
+      sources:
+      - "stg_aws_rss_feed"
+      parameters:
+        componentName: "LATERAL FLATTEN"
+        query: "SELECT XMLGET(VALUE, 'title', 0):\"$\"::string AS title,\r\n     \
+          \  XMLGET(VALUE, 'description', 0):\"$\"::string AS description,\r\n   \
+          \    XMLGET(VALUE, 'pubDate', 0):\"$\"::string AS pubDate\r\nFROM $T{stg_aws_rss_feed}\
+          \ \"f\",\r\n     LATERAL FLATTEN(to_array(\"f\".\"channel\":\"$\" )) xml_doc\r\
+          \nWHERE VALUE LIKE '<item>%'"
+design:
+  components:
+    stg_aws_rss_feed:
+      position:
+        x: -30
+        "y": 0
+      tempMetlId: 1
+    LATERAL FLATTEN:
+      position:
+        x: 150
+        "y": 0
+      tempMetlId: 2
