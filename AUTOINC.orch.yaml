@@ -37,3 +37,18 @@ design:
         x: 130
         "y": 30
       tempMetlId: 2
+  notes:
+    "1":
+      position:
+        x: 50
+        "y": -160
+      size:
+        height: 380
+        width: 440
+      theme: "white"
+      content: "The **Python Pushdown** component allows Python code to be executed\
+        \ directly against data sources during a transformation. This can improve\
+        \ performance over standard transformations by pushing computation down to\
+        \ the data source. The Python script has access to context variables and can\
+        \ update them. It can also update grid variables which are lists of lists\
+        \ used to pass tabular data between components."
