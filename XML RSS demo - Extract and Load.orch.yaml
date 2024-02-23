@@ -98,6 +98,9 @@ pipeline:
         disableAutoConvert: "False"
     Assert Table:
       type: "assert-table"
+      transitions:
+        success:
+        - "Create aws_rss_feed"
       parameters:
         componentName: "Assert Table"
         database: "[Environment Default]"
@@ -107,6 +110,53 @@ pipeline:
         tableMetadata:
         rowCountComparisonType: "Equal To"
         rowCountValue: "1"
+    Create aws_rss_feed:
+      type: "create-table"
+      parameters:
+        componentName: "Create aws_rss_feed"
+        createReplace: "Create if not exists"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        newTableName: "aws_rss_feed"
+        tableType: "Permanent"
+        columns:
+        - - "GUID"
+          - "VARCHAR"
+          - "40"
+          - ""
+          - ""
+          - "Yes"
+          - "Yes"
+          - ""
+        - - "TITLE"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "DESCRIPTION"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "PUBDATE"
+          - "DATE"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
 design:
   components:
     Start:
@@ -126,7 +176,7 @@ design:
       tempMetlId: 3
     S3 Load:
       position:
-        x: 290
+        x: 240
         "y": 10
       tempMetlId: 4
     Create FF_XML_STRIPOUTER:
@@ -136,9 +186,14 @@ design:
       tempMetlId: 5
     Assert Table:
       position:
-        x: 470
+        x: 340
         "y": 10
       tempMetlId: 7
+    Create aws_rss_feed:
+      position:
+        x: 490
+        "y": 10
+      tempMetlId: 8
   notes:
     "1":
       position:
