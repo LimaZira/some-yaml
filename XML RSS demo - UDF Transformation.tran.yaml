@@ -12,12 +12,12 @@ pipeline:
         columnNames:
         - "channel"
         timeOffset:
-    Use UDF:
+    XML to JSON using UDF:
       type: "calculator"
       sources:
       - "stg_aws_rss_feed"
       parameters:
-        componentName: "Use UDF"
+        componentName: "XML to JSON using UDF"
         includeInputColumns: "No"
         calculations:
         - - "PARSE_JSON(XML_TO_JSON(\"channel\"::VARCHAR))"
@@ -25,7 +25,7 @@ pipeline:
     Extract Nested Data:
       type: "extract-nested-data-sf"
       sources:
-      - "Use UDF"
+      - "XML to JSON using UDF"
       parameters:
         componentName: "Extract Nested Data"
         includeInputColumns: "No"
@@ -278,12 +278,12 @@ design:
   components:
     stg_aws_rss_feed:
       position:
-        x: 0
+        x: -30
         "y": 0
       tempMetlId: 1
-    Use UDF:
+    XML to JSON using UDF:
       position:
-        x: 150
+        x: 130
         "y": 0
       tempMetlId: 2
     Extract Nested Data:
@@ -293,6 +293,19 @@ design:
       tempMetlId: 3
     aws_rss_feed:
       position:
-        x: 430
+        x: 440
         "y": 0
       tempMetlId: 4
+  notes:
+    "1":
+      position:
+        x: 110
+        "y": -170
+      size:
+        height: 138
+        width: 380
+      theme: "light-green"
+      content: |-
+        Flatten all the <item>s from the RSS feed, and merge them into the permanent target table.
+
+        Once the data is in JSON format it's possible to use Extract Nested Data
