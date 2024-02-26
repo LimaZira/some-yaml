@@ -33,7 +33,7 @@ design:
   components:
     Start:
       position:
-        x: 0
+        x: -130
         "y": 0
       tempMetlId: 1
     Create function XML_TO_JSON:
@@ -43,6 +43,19 @@ design:
       tempMetlId: 2
     Run XML RSS demo - UDF Transformation:
       position:
-        x: 320
+        x: 530
         "y": 0
       tempMetlId: 3
+  notes:
+    "1":
+      position:
+        x: -40
+        "y": -150
+      size:
+        height: 250
+        width: 470
+      theme: "white"
+      content: |-
+        Create a Python user-defined function (UDF) to convert XML string values to JSON. The UDF uses the `xmltodict` package to parse XML strings and convert them to JSON strings.
+
+        This UDF is then available to use in downstream transformations to transform XML data to the JSON format.

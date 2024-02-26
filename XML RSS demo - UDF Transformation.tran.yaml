@@ -239,6 +239,41 @@ pipeline:
         arrayPrefix: "f"
         castingMethod: "Fail on invalid data"
         caseColumnAliasNames: "No"
+    aws_rss_feed:
+      type: "table-update"
+      sources:
+      - "Extract Nested Data"
+      parameters:
+        componentName: "aws_rss_feed"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "aws_rss_feed"
+        targetAlias: "target"
+        sourceAlias: "input"
+        joinExpression:
+        - - "\"input\".\"GUID\" = \"target\".\"GUID\""
+          - "Case"
+        whenMatched:
+        - - "true"
+          - "Update"
+        updateMapping:
+        - - "TITLE"
+          - "TITLE"
+        - - "DESCRIPTION"
+          - "DESCRIPTION"
+        - - "PUBDATE"
+          - "PUBDATE"
+        includeNotMatched: "Yes"
+        insertMapping:
+        - - "GUID"
+          - "GUID"
+        - - "TITLE"
+          - "TITLE"
+        - - "DESCRIPTION"
+          - "DESCRIPTION"
+        - - "PUBDATE"
+          - "PUBDATE"
 design:
   components:
     stg_aws_rss_feed:
@@ -256,3 +291,8 @@ design:
         x: 290
         "y": 0
       tempMetlId: 3
+    aws_rss_feed:
+      position:
+        x: 430
+        "y": 0
+      tempMetlId: 4

@@ -40,6 +40,8 @@ pipeline:
         - - "\"input\".\"GUID\" = \"target\".\"GUID\""
           - "Case"
         whenMatched:
+        - - "true"
+          - "Update"
         updateMapping:
         - - "TITLE"
           - "TITLE"
