@@ -1,0 +1,88 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Get Script"
+      parameters:
+        componentName: "Start"
+    Execute Script:
+      type: "python-pushdown"
+      parameters:
+        componentName: "Execute Script"
+        externalAccessIntegrations:
+        packages:
+        pythonScript: |
+          from io import StringIO
+
+          print("Database ", session.get_current_database())
+          print("Schema ", session.get_current_schema())
+
+          for cur in session.connection.execute_stream(StringIO(prvt_script)):
+              print("Running: ", cur.query)
+              for ret in cur:
+                  print(ret)
+        scriptTimeout: "360"
+    Get Script:
+      type: "python-script"
+      transitions:
+        success:
+        - "Print Variables"
+      parameters:
+        componentName: "Get Script"
+        script: "###\n# Variables are directly accessible: \n#   print (myvar)\n#\
+          \ Updating a variable:\n#   context.updateVariable('myvar', 'new-value')\n\
+          # Grid Variables are accessible via the context:\n#   print (context.getGridVariable('mygridvar'))\n\
+          # Updating a grid variable:\n#   context.updateGridVariable('mygridvar',\
+          \ [['list','of'],['lists','!']])\n# A database cursor can be accessed from\
+          \ the context (Jython only):\n#   cursor = context.cursor()\n#   cursor.execute('select\
+          \ count(*) from mytable')\n#   rowcount = cursor.fetchone()[0]\n###\n\n\
+          import boto3\n\ns3 = boto3.client('s3')\n\nresponse = s3.get_object(Bucket=\"\
+          mtln-ian\", Key=\"scripts/myscript.sql\")\n\ncontext.updateVariable('prvt_script',\
+          \ response['Body'].read().decode('utf-8'))\n"
+        interpreter: "Python 3"
+        timeout: "360"
+    Print Variables:
+      type: "print-variables"
+      transitions:
+        success:
+        - "Execute Script"
+      parameters:
+        componentName: "Print Variables"
+        variablesToPrint:
+        - - "prvt_script"
+        prefixText:
+        includeVariableName: "No"
+  variables:
+    prvt_script:
+      metadata:
+        type: "TEXT"
+        description: "The SQL script"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: ""
+design:
+  components:
+    Start:
+      position:
+        x: -470
+        "y": -10
+      tempMetlId: 1
+    Execute Script:
+      position:
+        x: -20
+        "y": -10
+      tempMetlId: 2
+    Get Script:
+      position:
+        x: -320
+        "y": -10
+      tempMetlId: 3
+    Print Variables:
+      position:
+        x: -170
+        "y": -10
+      tempMetlId: 4

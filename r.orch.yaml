@@ -1,0 +1,38 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Python Script"
+      parameters:
+        componentName: "Start"
+    Python Script:
+      type: "python-script"
+      parameters:
+        componentName: "Python Script"
+        script: "###\n# Variables are directly accessible: \n#   print (myvar)\n#\
+          \ Updating a variable:\n#   context.updateVariable('myvar', 'new-value')\n\
+          # Grid Variables are accessible via the context:\n#   print (context.getGridVariable('mygridvar'))\n\
+          # Updating a grid variable:\n#   context.updateGridVariable('mygridvar',\
+          \ [['list','of'],['lists','!']])\n# A database cursor can be accessed from\
+          \ the context (Jython only):\n#   cursor = context.cursor()\n#   cursor.execute('select\
+          \ count(*) from mytable')\n#   rowcount = cursor.fetchone()[0]\n###\nwith\
+          \ open(\"/tmp/file.sql\", 'r') as file:\n    for line in file.readlines():\n\
+          \        print(line.strip())\n"
+        interpreter: "Python 3"
+        timeout: "360"
+design:
+  components:
+    Start:
+      position:
+        x: -470
+        "y": 0
+      tempMetlId: 1
+    Python Script:
+      position:
+        x: -350
+        "y": 0
+      tempMetlId: 2

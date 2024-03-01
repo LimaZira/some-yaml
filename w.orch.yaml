@@ -1,0 +1,41 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Python Script"
+      parameters:
+        componentName: "Start"
+    Python Script:
+      type: "python-script"
+      parameters:
+        componentName: "Python Script"
+        script: "###\n# Variables are directly accessible: \n#   print (myvar)\n#\
+          \ Updating a variable:\n#   context.updateVariable('myvar', 'new-value')\n\
+          # Grid Variables are accessible via the context:\n#   print (context.getGridVariable('mygridvar'))\n\
+          # Updating a grid variable:\n#   context.updateGridVariable('mygridvar',\
+          \ [['list','of'],['lists','!']])\n# A database cursor can be accessed from\
+          \ the context (Jython only):\n#   cursor = context.cursor()\n#   cursor.execute('select\
+          \ count(*) from mytable')\n#   rowcount = cursor.fetchone()[0]\n###\nimport\
+          \ boto3\n\nwith open(\"/tmp/file.sql\", 'w') as file:\n    file.write(\"\
+          CREATE OR REPLACE TABLE tmp1(col1 VARCHAR(128), col2 TIMESTAMP_NTZ);\")\n\
+          \    file.write(\"INSERT INTO tmp1 VALUES (CURRENT_USER, CURRENT_TIMESTAMP);\"\
+          )\n    file.write(\"GRANT SELECT ON tmp1 TO PUBLIC;\")\n    file.write(\"\
+          COMMIT;\")\n"
+        interpreter: "Python 3"
+        timeout: "360"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    Python Script:
+      position:
+        x: 150
+        "y": 0
+      tempMetlId: 2

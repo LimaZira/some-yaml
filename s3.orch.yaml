@@ -1,0 +1,39 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Python Script"
+      parameters:
+        componentName: "Start"
+    Python Script:
+      type: "python-script"
+      parameters:
+        componentName: "Python Script"
+        script: "###\n# Variables are directly accessible: \n#   print (myvar)\n#\
+          \ Updating a variable:\n#   context.updateVariable('myvar', 'new-value')\n\
+          # Grid Variables are accessible via the context:\n#   print (context.getGridVariable('mygridvar'))\n\
+          # Updating a grid variable:\n#   context.updateGridVariable('mygridvar',\
+          \ [['list','of'],['lists','!']])\n# A database cursor can be accessed from\
+          \ the context (Jython only):\n#   cursor = context.cursor()\n#   cursor.execute('select\
+          \ count(*) from mytable')\n#   rowcount = cursor.fetchone()[0]\n###\n\n\
+          import boto3\n\ns3 = boto3.client('s3')\n\nresponse = s3.get_object(Bucket=\"\
+          mtln-ian\", Key=\"scripts/myscript.sql\")\n\nthescript = response['Body'].read().decode('utf-8')\n\
+          \nprint(thescript)\n"
+        interpreter: "Python 3"
+        timeout: "360"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    Python Script:
+      position:
+        x: 170
+        "y": 0
+      tempMetlId: 2
