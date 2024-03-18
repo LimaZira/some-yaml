@@ -32,8 +32,8 @@ pipeline:
             keyColumn: "section"
             limit: ""
         promptContext:
-          userContext: "You are a psychologist reviewing statements made by people\
-            \ at work."
+          userContext: "You are a psychologist reviewing comments made by people about\
+            \ their job."
           inputs:
           - - "section"
             - "section"
@@ -42,8 +42,13 @@ pipeline:
           outputFormat: "JSON"
           outputs:
           - - "motivation"
-            - "Give a single word indicating the primary motivation expressed in the\
-              \ statement. It's important to me that you write only one word."
+            - "Classify the motivation behind the comment into one of the following\
+              \ categories:\r\nPrestige, Money, Satisfaction\r\n\r\n- Prestige classification\
+              \ is when the comment is about high status, reputation and recognition\r\
+              \n- Money classification is when the comment is about being paid well\
+              \ financially\r\n- Satisfaction classification is when the comment indicates\
+              \ the person likes the job\r\n\r\nRemember to respond with one word\
+              \ only."
           - - "esteem_score"
             - "Give a score between 0 and 10 on the level of self-worth, accomplishment,\
               \ and respect you feel in the statement"
