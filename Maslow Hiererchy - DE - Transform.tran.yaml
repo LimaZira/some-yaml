@@ -2,132 +2,152 @@ type: "transformation"
 version: "1.0"
 pipeline:
   components:
-    stg_mh_de_17fr8d5:
+    mh_de_17fr8d5_OpenAI:
       type: "table-input"
       parameters:
-        componentName: "stg_mh_de_17fr8d5"
+        componentName: "mh_de_17fr8d5_OpenAI"
         database: "[Environment Default]"
         schema: "[Environment Default]"
-        targetTable: "stg_mh_de_17fr8d5"
+        targetTable: "mh_de_17fr8d5_OpenAI"
         columnNames:
-        - "row"
-        - "text"
+        - "section"
+        - "DATA"
         timeOffset:
-    Remove Votes:
-      type: "calculator"
+    Extract Nested Data:
+      type: "extract-nested-data-sf"
       sources:
-      - "stg_mh_de_17fr8d5"
+      - "mh_de_17fr8d5_OpenAI"
       parameters:
-        componentName: "Remove Votes"
-        includeInputColumns: "No"
-        calculations:
-        - - "\"row\""
-          - "row"
-        - - "CASE WHEN REGEXP_LIKE(\"text\", '[0-9]+') THEN NULL\r\n     ELSE TRIM(NULLIF(TRIM(\"\
-            text\"), ''))\r\nEND"
-          - "text"
-    Comments Only:
-      type: "calculator"
+        componentName: "Extract Nested Data"
+        includeInputColumns: "Yes"
+        columns:
+        - name: "motivation"
+          datatype: "VARCHAR"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "motivation"
+          isArray: "false"
+          include: "true"
+        - name: "self_esteem"
+          datatype: "VARCHAR"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "self_esteem"
+          isArray: "false"
+          include: "true"
+        - name: "prestige"
+          datatype: "VARCHAR"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "prestige"
+          isArray: "false"
+          include: "true"
+        - name: "esteem_score"
+          datatype: "NUMBER"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "esteem_score"
+          isArray: "false"
+          include: "true"
+        - name: "actualization_score"
+          datatype: "NUMBER"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "actualization_score"
+          isArray: "false"
+          include: "true"
+        outerJoin: "No"
+        inputAlias: "i"
+        arrayPrefix: "f"
+        castingMethod: "Fail on invalid data"
+        caseColumnAliasNames: "No"
+    Motivations:
+      type: "aggregate"
       sources:
-      - "Remove Votes"
+      - "Extract Nested Data"
       parameters:
-        componentName: "Comments Only"
-        includeInputColumns: "No"
-        calculations:
-        - - "\"row\""
-          - "row"
-        - - "CASE WHEN \"text\" = 'level 1' THEN \"row\" ELSE NULL END"
-          - "section"
-        - - "CASE WHEN REGEXP_LIKE(\"text\", 'level [0-9]') THEN NULL\r\n     WHEN\
-            \ REGEXP_LIKE(LEAD(\"text\", 1) OVER (ORDER BY \"row\"), 'level [0-9]')\
-            \ THEN NULL\r\n     WHEN REGEXP_LIKE(LAG (\"text\", 1) OVER (ORDER BY\
-            \ \"row\"), 'level [0-9]') THEN NULL\r\n     WHEN REGEXP_LIKE(LAG (\"\
-            text\", 2) OVER (ORDER BY \"row\"), 'level [0-9]') THEN NULL\r\n     WHEN\
-            \ REGEXP_LIKE(LAG (\"text\", 3) OVER (ORDER BY \"row\"), 'level [0-9]')\
-            \ THEN NULL\r\n     WHEN REGEXP_LIKE(LAG (\"text\", 4) OVER (ORDER BY\
-            \ \"row\"), 'level [0-9]') THEN NULL\r\n     ELSE \"text\"\r\nEND"
-          - "text"
-    Section:
-      type: "calculator"
+        componentName: "Motivations"
+        groupings:
+        - "motivation"
+        aggregations:
+        - - "motivation"
+          - "Count"
+        groupingType: "Group By"
+    Averages:
+      type: "aggregate"
       sources:
-      - "Comments Only"
+      - "Extract Nested Data"
       parameters:
-        componentName: "Section"
-        includeInputColumns: "No"
-        calculations:
-        - - "\"row\""
-          - "row"
-        - - "LAST_VALUE(\"section\") IGNORE NULLS OVER (ORDER BY \"row\" ROWS BETWEEN\
-            \ UNBOUNDED PRECEDING AND CURRENT ROW)"
-          - "section"
-        - - "\"text\""
-          - "text"
-    Remove Empty Lines:
-      type: "filter"
-      sources:
-      - "Section"
-      parameters:
-        componentName: "Remove Empty Lines"
-        filterConditions:
-        - - "text"
-          - "Not"
-          - "Null"
-          - ""
-        combineCondition: "And"
-    Aggregate:
-      type: "sql"
-      sources:
-      - "Remove Empty Lines"
-      parameters:
-        componentName: "Aggregate"
-        query: "SELECT \"section\", \r\n       LISTAGG(\"text\", '\\n') WITHIN GROUP(ORDER\
-          \ BY \"row\") AS \"comment\"\r\nFROM $T{Remove Empty Lines}\r\nGROUP BY\
-          \ \"section\""
-    Rewrite mh_de_17fr8d5:
-      type: "rewrite-table"
-      sources:
-      - "Aggregate"
-      parameters:
-        componentName: "Rewrite mh_de_17fr8d5"
-        warehouse: "[Environment Default]"
-        database: "[Environment Default]"
-        schema: "[Environment Default]"
-        targetTable: "mh_de_17fr8d5"
-        orderBy:
+        componentName: "Averages"
+        groupings:
+        aggregations:
+        - - "esteem_score"
+          - "Average"
+        - - "actualization_score"
+          - "Average"
+        groupingType: "Group By"
 design:
   components:
-    stg_mh_de_17fr8d5:
+    mh_de_17fr8d5_OpenAI:
       position:
-        x: -150
+        x: -190
         "y": 0
       tempMetlId: 1
-    Remove Votes:
+    Extract Nested Data:
       position:
-        x: -10
+        x: 120
         "y": 0
+      tempMetlId: 2
+    Motivations:
+      position:
+        x: 380
+        "y": 100
+      tempMetlId: 3
+    Averages:
+      position:
+        x: 380
+        "y": -90
       tempMetlId: 4
-    Comments Only:
+  notes:
+    "1":
       position:
-        x: 130
-        "y": 0
-      tempMetlId: 5
-    Section:
+        x: -250
+        "y": -80
+      size:
+        height: 208
+        width: 180
+      theme: "white"
+      content: "Data from the LLM analysis"
+    "2":
       position:
-        x: 270
-        "y": 0
-      tempMetlId: 6
-    Remove Empty Lines:
+        x: 20
+        "y": -80
+      size:
+        height: 208
+        width: 250
+      theme: "light-green"
+      content: "Sample this to view the outputs from the LLM analysis"
+    "3":
       position:
-        x: 410
-        "y": 0
-      tempMetlId: 8
-    Aggregate:
+        x: 330
+        "y": -160
+      size:
+        height: 168
+        width: 340
+      theme: "white"
+      content: "Sample this to view average **Esteem** and **Self Actualization**\
+        \ scores"
+    "4":
       position:
-        x: 560
-        "y": 0
-      tempMetlId: 9
-    Rewrite mh_de_17fr8d5:
-      position:
-        x: 700
-        "y": 0
-      tempMetlId: 10
+        x: 330
+        "y": 30
+      size:
+        height: 168
+        width: 340
+      theme: "white"
+      content: "Sample this to view the most common **Motivations** for data engineers"

@@ -1,0 +1,161 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    stg_mh_de_17fr8d5:
+      type: "table-input"
+      parameters:
+        componentName: "stg_mh_de_17fr8d5"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_mh_de_17fr8d5"
+        columnNames:
+        - "row"
+        - "text"
+        timeOffset:
+    Remove Votes:
+      type: "calculator"
+      sources:
+      - "stg_mh_de_17fr8d5"
+      parameters:
+        componentName: "Remove Votes"
+        includeInputColumns: "No"
+        calculations:
+        - - "\"row\""
+          - "row"
+        - - "CASE WHEN REGEXP_LIKE(\"text\", '[0-9]+') THEN NULL\r\n     ELSE TRIM(NULLIF(TRIM(\"\
+            text\"), ''))\r\nEND"
+          - "text"
+    Comments Only:
+      type: "calculator"
+      sources:
+      - "Remove Votes"
+      parameters:
+        componentName: "Comments Only"
+        includeInputColumns: "No"
+        calculations:
+        - - "\"row\""
+          - "row"
+        - - "CASE WHEN \"text\" = 'level 1' THEN \"row\" ELSE NULL END"
+          - "section"
+        - - "CASE WHEN REGEXP_LIKE(\"text\", 'level [0-9]') THEN NULL\r\n     WHEN\
+            \ REGEXP_LIKE(LEAD(\"text\", 1) OVER (ORDER BY \"row\"), 'level [0-9]')\
+            \ THEN NULL\r\n     WHEN REGEXP_LIKE(LAG (\"text\", 1) OVER (ORDER BY\
+            \ \"row\"), 'level [0-9]') THEN NULL\r\n     WHEN REGEXP_LIKE(LAG (\"\
+            text\", 2) OVER (ORDER BY \"row\"), 'level [0-9]') THEN NULL\r\n     WHEN\
+            \ REGEXP_LIKE(LAG (\"text\", 3) OVER (ORDER BY \"row\"), 'level [0-9]')\
+            \ THEN NULL\r\n     WHEN REGEXP_LIKE(LAG (\"text\", 4) OVER (ORDER BY\
+            \ \"row\"), 'level [0-9]') THEN NULL\r\n     ELSE \"text\"\r\nEND"
+          - "text"
+    Section:
+      type: "calculator"
+      sources:
+      - "Comments Only"
+      parameters:
+        componentName: "Section"
+        includeInputColumns: "No"
+        calculations:
+        - - "\"row\""
+          - "row"
+        - - "LAST_VALUE(\"section\") IGNORE NULLS OVER (ORDER BY \"row\" ROWS BETWEEN\
+            \ UNBOUNDED PRECEDING AND CURRENT ROW)"
+          - "section"
+        - - "\"text\""
+          - "text"
+    Remove Empty Lines:
+      type: "filter"
+      sources:
+      - "Section"
+      parameters:
+        componentName: "Remove Empty Lines"
+        filterConditions:
+        - - "text"
+          - "Not"
+          - "Null"
+          - ""
+        combineCondition: "And"
+    Aggregate:
+      type: "sql"
+      sources:
+      - "Remove Empty Lines"
+      parameters:
+        componentName: "Aggregate"
+        query: "SELECT \"section\", \r\n       LISTAGG(\"text\", '\\n') WITHIN GROUP(ORDER\
+          \ BY \"row\") AS \"comment\"\r\nFROM $T{Remove Empty Lines}\r\nGROUP BY\
+          \ \"section\""
+    Rewrite mh_de_17fr8d5:
+      type: "rewrite-table"
+      sources:
+      - "Aggregate"
+      parameters:
+        componentName: "Rewrite mh_de_17fr8d5"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "mh_de_17fr8d5"
+        orderBy:
+design:
+  components:
+    stg_mh_de_17fr8d5:
+      position:
+        x: -220
+        "y": 0
+      tempMetlId: 1
+    Remove Votes:
+      position:
+        x: -10
+        "y": 0
+      tempMetlId: 4
+    Comments Only:
+      position:
+        x: 130
+        "y": 0
+      tempMetlId: 5
+    Section:
+      position:
+        x: 270
+        "y": 0
+      tempMetlId: 6
+    Remove Empty Lines:
+      position:
+        x: 410
+        "y": 0
+      tempMetlId: 8
+    Aggregate:
+      position:
+        x: 560
+        "y": 0
+      tempMetlId: 9
+    Rewrite mh_de_17fr8d5:
+      position:
+        x: 790
+        "y": 0
+      tempMetlId: 10
+  notes:
+    "1":
+      position:
+        x: -60
+        "y": -90
+      size:
+        height: 218
+        width: 700
+      theme: "light-green"
+      content: "Prepare the data for analysis by grouping all comments by thread"
+    "2":
+      position:
+        x: -280
+        "y": -70
+      size:
+        height: 178
+        width: 180
+      theme: "white"
+      content: "Raw input data"
+    "3":
+      position:
+        x: 670
+        "y": -60
+      size:
+        height: 168
+        width: 300
+      theme: "white"
+      content: "Create `mh_de_17fr8d5` with a CTAS"
