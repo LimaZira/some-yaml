@@ -81,8 +81,8 @@ pipeline:
       parameters:
         componentName: "Aggregate"
         query: "SELECT \"section\", \r\n       LISTAGG(\"text\", '\\n') WITHIN GROUP(ORDER\
-          \ BY \"row\") AS OUTPUT_VAL\r\nFROM $T{Remove Empty Lines}\r\nGROUP BY \"\
-          section\""
+          \ BY \"row\") AS \"comment\"\r\nFROM $T{Remove Empty Lines}\r\nGROUP BY\
+          \ \"section\""
     Rewrite mh_de_17fr8d5:
       type: "rewrite-table"
       sources:
