@@ -13,7 +13,7 @@ pipeline:
       type: "ai-prompt"
       transitions:
         success:
-        - "Run Maslow Hiererchy - DE - Transform"
+        - "Run Maslow Hierarchy - DE - Transform"
       parameters:
         componentName: "OpenAI Prompt"
         service:
@@ -69,11 +69,11 @@ pipeline:
             createTableOptions: "Replace if Table Exists"
         ragConfig:
           isRagEnabled: "No"
-    Run Maslow Hiererchy - DE - Transform:
+    Run Maslow Hierarchy - DE - Transform:
       type: "run-transformation"
       parameters:
-        componentName: "Run Maslow Hiererchy - DE - Transform"
-        transformationJob: "Maslow Hiererchy - DE - Transform"
+        componentName: "Run Maslow Hierarchy - DE - Transform"
+        transformationJob: "Maslow Hierarchy - DE - Transform"
         setScalarVariables:
         setGridVariables:
 design:
@@ -88,9 +88,9 @@ design:
         x: -730
         "y": -90
       tempMetlId: 2
-    Run Maslow Hiererchy - DE - Transform:
+    Run Maslow Hierarchy - DE - Transform:
       position:
-        x: -380
+        x: -390
         "y": -90
       tempMetlId: 3
   notes:
@@ -118,7 +118,7 @@ design:
         \ named `OpenAI-Key` which stores your OpenAI key securely"
     "3":
       position:
-        x: -450
+        x: -470
         "y": -170
       size:
         height: 208
