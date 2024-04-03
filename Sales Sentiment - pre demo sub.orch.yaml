@@ -1,0 +1,190 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "S3 Load Gong"
+      parameters:
+        componentName: "Start"
+    S3 Load Gong:
+      type: "s3-load"
+      transitions:
+        success:
+        - "SQL Script"
+      parameters:
+        componentName: "S3 Load Gong"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://mtln-ian"
+        pattern: "data/SalesSentiment/${i}/${i}-Gong.json"
+        encryption: "None"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_sales_sentiment_gong"
+        loadColumns:
+        - "data"
+        format: "[Custom]"
+        fileType: "JSON"
+        compression: "AUTO"
+        enableOctal: "False"
+        allowDuplicates: "False"
+        stripOuterArray: "False"
+        stripNullValues: "False"
+        ignoreUtf8Errors: "False"
+        nullIf1:
+        trimSpace1: "False"
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        matchByColumnName: "None"
+        truncateColumns: "False"
+        forceLoad: "True"
+    SQL Script:
+      type: "sql-script"
+      transitions:
+        success:
+        - "S3 Load SalesloftTranscription"
+      parameters:
+        componentName: "SQL Script"
+        sqlScript: "UPDATE \"stg_sales_sentiment_gong\" SET \"prospect_id\" = ${i}\
+          \ WHERE \"prospect_id\" IS NULL;\r\n"
+    S3 Load SalesloftTranscription:
+      type: "s3-load"
+      transitions:
+        success:
+        - "SQL Script 2"
+      parameters:
+        componentName: "S3 Load SalesloftTranscription"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://mtln-ian"
+        pattern: "data/SalesSentiment/${i}/${i}-SalesloftTranscription.json"
+        encryption: "None"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_sales_sentiment_salesloft"
+        loadColumns:
+        - "data"
+        format: "[Custom]"
+        fileType: "JSON"
+        compression: "AUTO"
+        enableOctal: "False"
+        allowDuplicates: "False"
+        stripOuterArray: "False"
+        stripNullValues: "False"
+        ignoreUtf8Errors: "False"
+        nullIf1:
+        trimSpace1: "False"
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        matchByColumnName: "None"
+        truncateColumns: "False"
+        forceLoad: "True"
+    SQL Script 2:
+      type: "sql-script"
+      transitions:
+        success:
+        - "S3 Load"
+      parameters:
+        componentName: "SQL Script 2"
+        sqlScript: "UPDATE \"stg_sales_sentiment_salesloft\" SET \"prospect_id\" =\
+          \ ${i} WHERE \"prospect_id\" IS NULL;\r\n"
+    S3 Load:
+      type: "s3-load"
+      transitions:
+        success:
+        - "SQL Script 2 2"
+      parameters:
+        componentName: "S3 Load"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://mtln-ian"
+        pattern: "data/SalesSentiment/${i}/${i}-Opportunity.csv"
+        encryption: "None"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_sales_sentiment_opportunity"
+        loadColumns:
+        - "data"
+        format: "[Custom]"
+        fileType: "CSV"
+        compression: "AUTO"
+        recordDelimiter:
+        fieldDelimiter: "\\\""
+        skipHeader:
+        skipBlankLines: "False"
+        dateFormat:
+        timeFormat:
+        timestampFormat:
+        escape:
+        escapeUnenclosedField:
+        trimSpace: "False"
+        fieldOptionallyEnclosed:
+        nullIf:
+        errorOnColumnCountMismatch: "False"
+        emptyFieldAsNull: "True"
+        replaceInvalidCharacters: "False"
+        encodingType:
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        truncateColumns: "False"
+        forceLoad: "True"
+    SQL Script 2 2:
+      type: "sql-script"
+      parameters:
+        componentName: "SQL Script 2 2"
+        sqlScript: "UPDATE \"stg_sales_sentiment_opportunity\" SET \"prospect_id\"\
+          \ = ${i} WHERE \"prospect_id\" IS NULL;\r\n"
+  variables:
+    i:
+      metadata:
+        type: "NUMBER"
+        description: ""
+        scope: "COPIED"
+        visibility: "PUBLIC"
+      defaultValue: "1"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    S3 Load Gong:
+      position:
+        x: 120
+        "y": 0
+      tempMetlId: 2
+    SQL Script:
+      position:
+        x: 240
+        "y": 0
+      tempMetlId: 3
+    S3 Load SalesloftTranscription:
+      position:
+        x: 120
+        "y": 130
+      tempMetlId: 4
+    SQL Script 2:
+      position:
+        x: 240
+        "y": 130
+      tempMetlId: 5
+    S3 Load:
+      position:
+        x: 120
+        "y": 270
+      tempMetlId: 6
+    SQL Script 2 2:
+      position:
+        x: 240
+        "y": 270
+      tempMetlId: 7

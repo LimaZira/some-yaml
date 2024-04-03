@@ -1,0 +1,173 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Replace stg_sales_sentiment_gong"
+      parameters:
+        componentName: "Start"
+    Replace stg_sales_sentiment_gong:
+      type: "create-table"
+      transitions:
+        success:
+        - "Replace stg_sales_sentiment_salesloft"
+      parameters:
+        componentName: "Replace stg_sales_sentiment_gong"
+        createReplace: "Replace"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        newTableName: "stg_sales_sentiment_gong"
+        tableType: "Permanent"
+        columns:
+        - - "prospect_id"
+          - "NUMBER"
+          - "8"
+          - "0"
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "data"
+          - "VARIANT"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+    Loop Iterator:
+      type: "loop-iterator"
+      iterationTarget: "Run Sales Sentiment - pre demo sub"
+      parameters:
+        componentName: "Loop Iterator"
+        concurrency: "Sequential"
+        variableToIterate: "i"
+        startingValue: "1"
+        incrementValue: "1"
+        endValue: "20"
+        breakOnFailure: "Yes"
+    Run Sales Sentiment - pre demo sub:
+      type: "run-orchestration"
+      parameters:
+        componentName: "Run Sales Sentiment - pre demo sub"
+        orchestrationJob: "Sales Sentiment - pre demo sub"
+        setScalarVariables:
+        - - "i"
+          - "${i}"
+        setGridVariables:
+    Replace stg_sales_sentiment_salesloft:
+      type: "create-table"
+      transitions:
+        success:
+        - "Replace stg_sales_sentiment_opportunity"
+      parameters:
+        componentName: "Replace stg_sales_sentiment_salesloft"
+        createReplace: "Replace"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        newTableName: "stg_sales_sentiment_salesloft"
+        tableType: "Permanent"
+        columns:
+        - - "prospect_id"
+          - "NUMBER"
+          - "8"
+          - "0"
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "data"
+          - "VARIANT"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+    Replace stg_sales_sentiment_opportunity:
+      type: "create-table"
+      transitions:
+        success:
+        - "Loop Iterator"
+      parameters:
+        componentName: "Replace stg_sales_sentiment_opportunity"
+        createReplace: "Replace"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        newTableName: "stg_sales_sentiment_opportunity"
+        tableType: "Permanent"
+        columns:
+        - - "prospect_id"
+          - "NUMBER"
+          - "8"
+          - "0"
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "data"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+  variables:
+    i:
+      metadata:
+        type: "NUMBER"
+        description: "Looper"
+        scope: "COPIED"
+        visibility: "PRIVATE"
+      defaultValue: "1"
+design:
+  components:
+    Start:
+      position:
+        x: -330
+        "y": 0
+      tempMetlId: 1
+    Replace stg_sales_sentiment_gong:
+      position:
+        x: -190
+        "y": 0
+      tempMetlId: 3
+    Loop Iterator:
+      position:
+        x: 230
+        "y": -10
+      tempMetlId: 6
+    Run Sales Sentiment - pre demo sub:
+      position:
+        x: 230
+        "y": -10
+      tempMetlId: 7
+    Replace stg_sales_sentiment_salesloft:
+      position:
+        x: -50
+        "y": 0
+      tempMetlId: 8
+    Replace stg_sales_sentiment_opportunity:
+      position:
+        x: 90
+        "y": 0
+      tempMetlId: 9

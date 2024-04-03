@@ -68,7 +68,14 @@ pipeline:
             table: "mh_de_17fr8d5_OpenAI"
             createTableOptions: "Replace if Table Exists"
         ragConfig:
-          isRagEnabled: "No"
+          isRagEnabled: "Yes"
+          ragPretext: "Consider the following data for context in your response, if\
+            \ the data is relevant"
+          inputs:
+            searchColumn:
+          embeddingGenerator:
+            embeddingProviderType: "OpenAI"
+          vectorDatabase: "Pinecone"
     Run Maslow Hierarchy - DE - Transform:
       type: "run-transformation"
       parameters:

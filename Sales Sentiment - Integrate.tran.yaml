@@ -1,0 +1,189 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    h_prospect:
+      type: "table-input"
+      parameters:
+        componentName: "h_prospect"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "h_prospect"
+        columnNames:
+        - "sk"
+        - "prospect_id"
+        timeOffset:
+    s_prospect_gong:
+      type: "table-input"
+      parameters:
+        componentName: "s_prospect_gong"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "s_prospect_gong"
+        columnNames:
+        - "prospect_sk"
+        - "text"
+        timeOffset:
+    s_prospect_opportunity:
+      type: "table-input"
+      parameters:
+        componentName: "s_prospect_opportunity"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "s_prospect_opportunity"
+        columnNames:
+        - "prospect_sk"
+        - "text"
+        timeOffset:
+    s_prospect_salesloft:
+      type: "table-input"
+      parameters:
+        componentName: "s_prospect_salesloft"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "s_prospect_salesloft"
+        columnNames:
+        - "prospect_sk"
+        - "text"
+        timeOffset:
+    gong:
+      type: "sql"
+      sources:
+      - "s_prospect_gong"
+      parameters:
+        componentName: "gong"
+        query: "SELECT \"prospect_sk\", LISTAGG(\"text\", ' ') AS \"text\"\r\nFROM\
+          \ $T{s_prospect_gong} \r\nGROUP BY \"prospect_sk\""
+    opp:
+      type: "sql"
+      sources:
+      - "s_prospect_opportunity"
+      parameters:
+        componentName: "opp"
+        query: "SELECT \"prospect_sk\", LISTAGG(\"text\", ' ') AS \"text\"\r\nFROM\
+          \ $T{s_prospect_opportunity}\r\nGROUP BY \"prospect_sk\""
+    salesloft:
+      type: "sql"
+      sources:
+      - "s_prospect_salesloft"
+      parameters:
+        componentName: "salesloft"
+        query: "SELECT \"prospect_sk\", LISTAGG(\"text\", ' ') AS \"text\"\r\nFROM\
+          \ $T{s_prospect_salesloft} \r\nGROUP BY \"prospect_sk\""
+    Join:
+      type: "join"
+      sources:
+      - "h_prospect"
+      - "gong"
+      - "opp"
+      - "salesloft"
+      parameters:
+        componentName: "Join"
+        mainTable: "h_prospect"
+        mainTableAlias: "h"
+        joins:
+        - - "gong"
+          - "g"
+          - "Left"
+        - - "salesloft"
+          - "s"
+          - "Left"
+        - - "opp"
+          - "o"
+          - "Left"
+        joinExpressions:
+        - - "\"h\".\"sk\" = \"g\".\"prospect_sk\""
+          - "h_Left_g"
+        - - "\"h\".\"sk\" = \"s\".\"prospect_sk\""
+          - "h_Left_s"
+        - - "\"h\".\"sk\" = \"o\".\"prospect_sk\""
+          - "h_Left_o"
+        columnMappings:
+        - - "h.sk"
+          - "sk"
+        - - "h.prospect_id"
+          - "prospect_id"
+        - - "s.text"
+          - "s_text"
+        - - "g.text"
+          - "g_text"
+        - - "o.text"
+          - "o_text"
+    Calculator:
+      type: "calculator"
+      sources:
+      - "Join"
+      parameters:
+        componentName: "Calculator"
+        includeInputColumns: "No"
+        calculations:
+        - - "\"sk\""
+          - "sk"
+        - - "\"prospect_id\""
+          - "prospect_id"
+        - - "TRIM(\r\nCOALESCE(\"s_text\", '') || ' ' ||\r\nCOALESCE(\"g_text\", '')\
+            \ || ' ' ||\r\nCOALESCE(\"o_text\", '') || ' '\r\n)"
+          - "text"
+    Rewrite Table:
+      type: "rewrite-table"
+      sources:
+      - "Calculator"
+      parameters:
+        componentName: "Rewrite Table"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "temp_prospect_statements"
+        orderBy:
+design:
+  components:
+    h_prospect:
+      position:
+        x: -260
+        "y": -90
+      tempMetlId: 1
+    s_prospect_gong:
+      position:
+        x: -260
+        "y": 0
+      tempMetlId: 2
+    s_prospect_opportunity:
+      position:
+        x: -260
+        "y": 90
+      tempMetlId: 3
+    s_prospect_salesloft:
+      position:
+        x: -260
+        "y": 180
+      tempMetlId: 4
+    gong:
+      position:
+        x: -70
+        "y": 0
+      tempMetlId: 5
+    opp:
+      position:
+        x: -70
+        "y": 90
+      tempMetlId: 6
+    salesloft:
+      position:
+        x: -70
+        "y": 180
+      tempMetlId: 7
+    Join:
+      position:
+        x: 140
+        "y": -90
+      tempMetlId: 8
+    Calculator:
+      position:
+        x: 260
+        "y": -90
+      tempMetlId: 9
+    Rewrite Table:
+      position:
+        x: 380
+        "y": -90
+      tempMetlId: 10

@@ -1,0 +1,85 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    temp_prospect_statements_openai:
+      type: "table-input"
+      parameters:
+        componentName: "temp_prospect_statements_openai"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "temp_prospect_statements_openai"
+        columnNames:
+        - "prospect_id"
+        - "DATA"
+        timeOffset:
+    Extract Nested Data:
+      type: "extract-nested-data-sf"
+      sources:
+      - "temp_prospect_statements_openai"
+      parameters:
+        componentName: "Extract Nested Data"
+        includeInputColumns: "Yes"
+        columns:
+        - name: "sentiment"
+          datatype: "VARCHAR"
+          size: "1024"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "sentiment"
+          isArray: "false"
+          include: "true"
+        - name: "next_step"
+          datatype: "VARCHAR"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "next_step"
+          isArray: "false"
+          include: "true"
+        - name: "concern"
+          datatype: "VARCHAR"
+          size: "0"
+          decimalPlaces: "0"
+          columnName: "DATA"
+          aliasName: "concern"
+          isArray: "false"
+          include: "true"
+        outerJoin: "No"
+        inputAlias: "i"
+        arrayPrefix: "f"
+        castingMethod: "Fail on invalid data"
+        caseColumnAliasNames: "No"
+    Rename:
+      type: "rename"
+      sources:
+      - "Extract Nested Data"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "prospect_id"
+          - "prospect_id"
+        - - "sentiment"
+          - "sentiment"
+        - - "concern"
+          - "concern"
+        - - "next_step"
+          - "next_step"
+        includeInputColumns: "No"
+design:
+  components:
+    temp_prospect_statements_openai:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    Extract Nested Data:
+      position:
+        x: 150
+        "y": 0
+      tempMetlId: 2
+    Rename:
+      position:
+        x: 300
+        "y": 0
+      tempMetlId: 3
