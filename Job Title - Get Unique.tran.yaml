@@ -1,0 +1,101 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    stg_salesforce_title:
+      type: "table-input"
+      parameters:
+        componentName: "stg_salesforce_title"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_salesforce_title"
+        columnNames:
+        - "Title"
+        timeOffset:
+    Calculator:
+      type: "calculator"
+      sources:
+      - "stg_salesforce_title"
+      parameters:
+        componentName: "Calculator"
+        includeInputColumns: "No"
+        calculations:
+        - - "NULLIF(\"Title\", '')"
+          - "Title"
+    Filter:
+      type: "filter"
+      sources:
+      - "Calculator"
+      parameters:
+        componentName: "Filter"
+        filterConditions:
+        - - "Title"
+          - "Not"
+          - "Null"
+          - ""
+        combineCondition: "And"
+    Aggregate:
+      type: "aggregate"
+      sources:
+      - "Filter"
+      parameters:
+        componentName: "Aggregate"
+        groupings:
+        - "Title"
+        aggregations:
+        - - "Title"
+          - "Count"
+        groupingType: "Group By"
+    Rename:
+      type: "rename"
+      sources:
+      - "Aggregate"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "Title"
+          - "Title"
+        includeInputColumns: "No"
+    Rewrite Table:
+      type: "rewrite-table"
+      sources:
+      - "Rename"
+      parameters:
+        componentName: "Rewrite Table"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "tmp_distinct_job_title"
+        orderBy:
+design:
+  components:
+    stg_salesforce_title:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    Calculator:
+      position:
+        x: 140
+        "y": 0
+      tempMetlId: 2
+    Filter:
+      position:
+        x: 280
+        "y": 0
+      tempMetlId: 3
+    Aggregate:
+      position:
+        x: 420
+        "y": 0
+      tempMetlId: 4
+    Rename:
+      position:
+        x: 550
+        "y": 0
+      tempMetlId: 5
+    Rewrite Table:
+      position:
+        x: 690
+        "y": 0
+      tempMetlId: 6
