@@ -1,0 +1,369 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    stg_article:
+      type: "table-input"
+      parameters:
+        componentName: "stg_article"
+        database: "[Environment Default]"
+        schema: "IAN"
+        targetTable: "stg_article"
+        columnNames:
+        - "BlogTitle"
+        - "Contributor"
+        - "Team"
+        - "Submitted"
+        - "Draft"
+        - "Published"
+        - "Asana_CDB"
+        - "Asana_MCC"
+        - "WebsiteURL"
+        - "Days"
+        - "MonthPublished "
+        - "Notes"
+        timeOffset:
+    Article:
+      type: "calculator"
+      sources:
+      - "stg_article"
+      parameters:
+        componentName: "Article"
+        includeInputColumns: "No"
+        calculations:
+        - - "\"BlogTitle\""
+          - "BlogTitle"
+        - - "\"Contributor\""
+          - "Contributor"
+        - - "TO_DATE(\"Submitted\", 'DD/MM/YYYY')"
+          - "Submitted"
+        - - "TO_DATE(\"Draft\", 'DD/MM/YYYY')"
+          - "Draft"
+        - - "TO_DATE(\"Published\", 'DD/MM/YYYY')"
+          - "Published"
+        - - "\"WebsiteURL\""
+          - "WebsiteURL"
+        - - "TO_CHAR(TO_DATE(\"Published\", 'DD/MM/YYYY'), 'YYYY-MM')"
+          - "MonthPublished"
+        - - "REPLACE(\"WebsiteURL\", 'https://www.matillion.com', '')"
+          - "HeapPath"
+        - - "\"Asana_CDB\""
+          - "CDB_permalink_url"
+        - - "\"Asana_MCC\""
+          - "MCC_permalink_URL"
+    stg_task:
+      type: "table-input"
+      parameters:
+        componentName: "stg_task"
+        database: "[Environment Default]"
+        schema: "IAN"
+        targetTable: "stg_task"
+        columnNames:
+        - "gid"
+        - "permalink_url"
+        - "name"
+        - "created_at"
+        - "completed_at"
+        - "completed"
+        - "ContentType"
+        - "DraftAccepted"
+        - "TechnicalScore"
+        timeOffset:
+    stg_product_marketing_blog_page_view_any_page:
+      type: "table-input"
+      parameters:
+        componentName: "stg_product_marketing_blog_page_view_any_page"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_product_marketing_blog_page_view_any_page"
+        columnNames:
+        - "path"
+        - "total_views"
+        - "first_view"
+        - "last_view"
+        timeOffset:
+    JoinAT:
+      type: "join"
+      sources:
+      - "Article"
+      - "Asana Task"
+      parameters:
+        componentName: "JoinAT"
+        mainTable: "Article"
+        mainTableAlias: "article"
+        joins:
+        - - "Asana Task"
+          - "asana"
+          - "Left"
+        joinExpressions:
+        - - "\"asana\".\"permalink_url\" = \"article\".\"MCC_permalink_URL\""
+          - "article_Left_asana"
+        columnMappings:
+        - - "article.BlogTitle"
+          - "BlogTitle"
+        - - "article.Contributor"
+          - "Contributor"
+        - - "article.Submitted"
+          - "Submitted"
+        - - "article.Draft"
+          - "Draft"
+        - - "article.Published"
+          - "Published"
+        - - "article.WebsiteURL"
+          - "WebsiteURL"
+        - - "article.MonthPublished"
+          - "MonthPublished"
+        - - "article.HeapPath"
+          - "HeapPath"
+        - - "asana.gid"
+          - "gid"
+        - - "asana.permalink_url"
+          - "permalink_url"
+        - - "asana.name"
+          - "name"
+        - - "asana.created_at"
+          - "created_at"
+        - - "asana.completed_at"
+          - "completed_at"
+        - - "asana.completed"
+          - "completed"
+        - - "asana.ContentType"
+          - "ContentType"
+        - - "asana.DraftAccepted"
+          - "DraftAccepted"
+        - - "asana.TechnicalScore"
+          - "TechnicalScore"
+    Rewards Programme:
+      type: "sql"
+      sources:
+      - "stg_article"
+      parameters:
+        componentName: "Rewards Programme"
+        query: "WITH d1 AS (SELECT \"BlogTitle\", \"Contributor\", TO_DATE(\"Draft\"\
+          , 'DD/MM/YYYY') AS \"Draft\"\r\n            FROM \"DEV_DB\".\"IAN\".\"stg_article\"\
+          ),\r\n     d2 AS (SELECT d1.\"BlogTitle\", d1.\"Contributor\", d1.\"Draft\"\
+          , d2.\"Draft\" AS \"PrevDraft\", CASE WHEN d2.\"Draft\" IS NULL THEN 0 ELSE\
+          \ 1 END AS \"Counter\"\r\n            FROM d1 d1\r\n            LEFT JOIN\
+          \ d1 d2 ON d2.\"Contributor\" = d1.\"Contributor\" AND DATEDIFF(DAY, d2.\"\
+          Draft\", d1.\"Draft\") <= 90 AND d2.\"Draft\" < d1.\"Draft\"\r\n       \
+          \     WHERE d1.\"Draft\" IS NOT NULL)\r\nSELECT d2.\"Contributor\", d2.\"\
+          Draft\", d2.\"BlogTitle\", SUM(d2.\"Counter\") AS \"Counter\",\r\n     \
+          \  CASE WHEN SUM(d2.\"Counter\") > 2 THEN 100 + (100 * (SUM(d2.\"Counter\"\
+          ) - 2))\r\n            ELSE 100\r\n       END AS \"Bonus\"\r\nFROM d2\r\n\
+          GROUP BY d2.\"BlogTitle\", d2.\"Contributor\", d2.\"Draft\"\r\nORDER BY\
+          \ 1,2"
+    Asana Task:
+      type: "calculator"
+      sources:
+      - "stg_task"
+      parameters:
+        componentName: "Asana Task"
+        includeInputColumns: "No"
+        calculations:
+        - - "\"gid\""
+          - "gid"
+        - - "\"permalink_url\""
+          - "permalink_url"
+        - - "\"name\""
+          - "name"
+        - - "TO_DATE(SUBSTR(\"created_at\", 1, 10), 'YYYY-MM-DD')"
+          - "created_at"
+        - - "TO_DATE(SUBSTR(\"completed_at\", 1, 10), 'YYYY-MM-DD')"
+          - "completed_at"
+        - - "\"completed\""
+          - "completed"
+        - - "\"ContentType\""
+          - "ContentType"
+        - - "TO_DATE(SUBSTR(\"DraftAccepted\", 1, 10), 'YYYY-MM-DD')"
+          - "DraftAccepted"
+        - - "\"TechnicalScore\""
+          - "TechnicalScore"
+    Join:
+      type: "join"
+      sources:
+      - "JoinAT"
+      - "Heap"
+      parameters:
+        componentName: "Join"
+        mainTable: "JoinAT"
+        mainTableAlias: "article"
+        joins:
+        - - "Heap"
+          - "heap"
+          - "Left"
+        joinExpressions:
+        - - "\"article\".\"HeapPath\" = \"heap\".\"path\""
+          - "article_Left_heap"
+        columnMappings:
+        - - "article.BlogTitle"
+          - "BlogTitle"
+        - - "article.Contributor"
+          - "Contributor"
+        - - "article.Submitted"
+          - "Submitted"
+        - - "article.Draft"
+          - "Draft"
+        - - "article.Published"
+          - "Published"
+        - - "article.WebsiteURL"
+          - "WebsiteURL"
+        - - "article.MonthPublished"
+          - "MonthPublished"
+        - - "article.HeapPath"
+          - "HeapPath"
+        - - "article.gid"
+          - "gid"
+        - - "article.permalink_url"
+          - "permalink_url"
+        - - "article.name"
+          - "name"
+        - - "article.created_at"
+          - "created_at"
+        - - "article.completed_at"
+          - "completed_at"
+        - - "article.completed"
+          - "completed"
+        - - "article.ContentType"
+          - "ContentType"
+        - - "article.DraftAccepted"
+          - "DraftAccepted"
+        - - "article.TechnicalScore"
+          - "TechnicalScore"
+        - - "heap.total_views"
+          - "total_views"
+        - - "heap.first_view"
+          - "first_view"
+        - - "heap.last_view"
+          - "last_view"
+        - - "heap.days_live"
+          - "days_live"
+        - - "heap.views_per_day"
+          - "views_per_day"
+    Heap:
+      type: "calculator"
+      sources:
+      - "stg_product_marketing_blog_page_view_any_page"
+      parameters:
+        componentName: "Heap"
+        includeInputColumns: "No"
+        calculations:
+        - - "\"path\""
+          - "path"
+        - - "\"total_views\""
+          - "total_views"
+        - - "\"first_view\""
+          - "first_view"
+        - - "\"last_view\""
+          - "last_view"
+        - - "NULLIF(DATEDIFF(DAY, \"first_view\", CURRENT_DATE), 0)"
+          - "days_live"
+        - - "ROUND(\"total_views\" / NULLIF(DATEDIFF(DAY, \"first_view\", CURRENT_DATE),\
+            \ 0), 2)"
+          - "views_per_day"
+    Create View:
+      type: "create-view"
+      sources:
+      - "Join"
+      parameters:
+        componentName: "Create View"
+        database: "[Environment Default]"
+        schema: "IAN"
+        viewName: "v_cs_perf"
+        secureView: "No"
+        viewType: "Standard"
+    Create View 2:
+      type: "create-view"
+      sources:
+      - "Rewards Programme"
+      parameters:
+        componentName: "Create View 2"
+        database: "[Environment Default]"
+        schema: "IAN"
+        viewName: "v_cs_rp"
+        secureView: "No"
+        viewType: "Standard"
+design:
+  components:
+    stg_article:
+      position:
+        x: 10
+        "y": -120
+      tempMetlId: 1
+    Article:
+      position:
+        x: 160
+        "y": -70
+      tempMetlId: 2
+    stg_task:
+      position:
+        x: 10
+        "y": 0
+      tempMetlId: 3
+    stg_product_marketing_blog_page_view_any_page:
+      position:
+        x: 10
+        "y": 120
+      tempMetlId: 4
+    JoinAT:
+      position:
+        x: 310
+        "y": 0
+      tempMetlId: 5
+    Rewards Programme:
+      position:
+        x: 440
+        "y": -120
+      tempMetlId: 6
+    Asana Task:
+      position:
+        x: 160
+        "y": 0
+      tempMetlId: 7
+    Join:
+      position:
+        x: 440
+        "y": 120
+      tempMetlId: 8
+    Heap:
+      position:
+        x: 160
+        "y": 120
+      tempMetlId: 9
+    Create View:
+      position:
+        x: 560
+        "y": 120
+      tempMetlId: 10
+    Create View 2:
+      position:
+        x: 560
+        "y": -120
+      tempMetlId: 11
+  notes:
+    "1":
+      position:
+        x: -310
+        "y": -130
+      size:
+        height: 58
+        width: 300
+      theme: "white"
+      content: "From Executive Editorial Board Ideas"
+    "2":
+      position:
+        x: -310
+        "y": -10
+      size:
+        height: 58
+        width: 300
+      theme: "white"
+      content: "From Asana"
+    "3":
+      position:
+        x: -310
+        "y": 110
+      size:
+        height: 58
+        width: 300
+      theme: "white"
+      content: "From Heap"

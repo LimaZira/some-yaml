@@ -1,0 +1,48 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Copy Heap data"
+      parameters:
+        componentName: "Start"
+    Copy Heap data:
+      type: "database-query"
+      parameters:
+        componentName: "Copy Heap data"
+        basicAdvancedMode: "Advanced"
+        databaseType: "Snowflake"
+        connectionUrl: "jdbc:snowflake://SE30683-MATILLIONPARTNER.snowflakecomputing.com"
+        username: "emd_dev"
+        password: "EMD_DEV-MATILLIONPARTNER"
+        connectionOptions:
+        - - "warehouse"
+          - "PC_MATILLION_WH"
+        sqlQuery: "SELECT PATH::VARCHAR(1024) AS \"path\", COUNT(*) AS \"total_views\"\
+          , MIN(CAST(\"TIME\" AS DATE)) AS \"first_view\", MAX(CAST(\"TIME\" AS DATE))\
+          \ AS \"last_view\"\r\nFROM HEAP_MAIN_PRODUCTION.HEAP.product_marketing_blog_page_view_any_page\r\
+          \nGROUP BY PATH"
+        type: "Standard"
+        primaryKeys:
+        warehouse1: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "stg_product_marketing_blog_page_view_any_page"
+        stage1: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+design:
+  components:
+    Start:
+      position:
+        x: -150
+        "y": 20
+      tempMetlId: 1
+    Copy Heap data:
+      position:
+        x: 40
+        "y": 20
+      tempMetlId: 2

@@ -1,0 +1,180 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Create stg_article"
+      parameters:
+        componentName: "Start"
+    Move Data from Amazon S3 to Snowflake:
+      type: "s3-load"
+      parameters:
+        componentName: "Move Data from Amazon S3 to Snowflake"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://mtln-ian"
+        pattern: "Content/Articles.tsv"
+        encryption: "None"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "IAN"
+        targetTable: "stg_article"
+        loadColumns:
+        format: "[Custom]"
+        fileType: "CSV"
+        compression: "AUTO"
+        recordDelimiter:
+        fieldDelimiter: "\\t"
+        skipHeader: "2"
+        skipBlankLines: "False"
+        dateFormat:
+        timeFormat:
+        timestampFormat:
+        escape:
+        escapeUnenclosedField:
+        trimSpace: "False"
+        fieldOptionallyEnclosed:
+        nullIf:
+        errorOnColumnCountMismatch: "False"
+        emptyFieldAsNull: "True"
+        replaceInvalidCharacters: "False"
+        encodingType:
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        truncateColumns: "False"
+        forceLoad: "True"
+    Create stg_article:
+      type: "create-table"
+      transitions:
+        success:
+        - "Move Data from Amazon S3 to Snowflake"
+      parameters:
+        componentName: "Create stg_article"
+        createReplace: "Replace"
+        database: "[Environment Default]"
+        schema: "IAN"
+        newTableName: "stg_article"
+        tableType: "Permanent"
+        columns:
+        - - "BlogTitle"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "Yes"
+          - "No"
+          - ""
+        - - "Contributor"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "Yes"
+          - "No"
+          - ""
+        - - "Team"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "Submitted"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "Yes"
+          - "No"
+          - ""
+        - - "Draft"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "Published"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "Asana_CDB"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "Asana_MCC"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "WebsiteURL"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "Days"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "MonthPublished "
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        - - "Notes"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+design:
+  components:
+    Start:
+      position:
+        x: -510
+        "y": -180
+      tempMetlId: 1
+    Move Data from Amazon S3 to Snowflake:
+      position:
+        x: -210
+        "y": -180
+      tempMetlId: 2
+    Create stg_article:
+      position:
+        x: -350
+        "y": -180
+      tempMetlId: 3
