@@ -1,0 +1,76 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    TDL_C:
+      type: "table-input"
+      parameters:
+        componentName: "TDL_C"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "TDL_C"
+        columnNames:
+        - "COL1"
+        timeOffset:
+    TDL_F:
+      type: "table-input"
+      parameters:
+        componentName: "TDL_F"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "TDL_F"
+        columnNames:
+        - "COL1"
+        timeOffset:
+    Join:
+      type: "join"
+      sources:
+      - "TDL_C"
+      - "TDL_F"
+      parameters:
+        componentName: "Join"
+        mainTable: "TDL_C"
+        mainTableAlias: "c"
+        joins:
+        - - "TDL_F"
+          - "f"
+          - "Inner"
+        joinExpressions:
+        - - "\"c\".\"COL1\" = \"f\".\"COL1\""
+          - "c_Inner_f"
+        columnMappings:
+        - - "c.COL1"
+          - "COL1"
+    Rewrite Table:
+      type: "rewrite-table"
+      sources:
+      - "Join"
+      parameters:
+        componentName: "Rewrite Table"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "TDL_G"
+        orderBy:
+design:
+  components:
+    TDL_C:
+      position:
+        x: 590
+        "y": 260
+      tempMetlId: 1
+    TDL_F:
+      position:
+        x: 600
+        "y": 420
+      tempMetlId: 2
+    Join:
+      position:
+        x: 770
+        "y": 280
+      tempMetlId: 3
+    Rewrite Table:
+      position:
+        x: 890
+        "y": 280
+      tempMetlId: 4

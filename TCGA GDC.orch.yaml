@@ -1,0 +1,49 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "TCGA GDC geq_files"
+      parameters:
+        componentName: "Start"
+    TCGA GDC geq_files:
+      type: "modular-api-extract-input-v1"
+      parameters:
+        componentName: "TCGA GDC geq_files"
+        inputId: "api-extract-input-v1"
+        api-extract-input-v1:
+          profile: "custom-b8413146-fe5a-4a9e-b023-2b0c39bf3ca3"
+          endpoint: "geq_files"
+          connectionRef:
+            authType: "NONE"
+          uriParams:
+          queryParams:
+          headerParams:
+          postBody:
+          pageLimit:
+          logLevel: "ERROR"
+        outputId: "snowflake-output-connector-v0"
+        snowflake-output-connector-v0:
+          warehouse: "[Environment Default]"
+          database: "[Environment Default]"
+          schema: "[Environment Default]"
+          tableName: "stg_geq_files"
+          createTableMode: "REPLACE_IF_EXISTS"
+          cleanStagedFiles: "Yes"
+          stagePlatform: "SNOWFLAKE"
+          snowflake#internalStageType: "USER"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    TCGA GDC geq_files:
+      position:
+        x: 140
+        "y": 0
+      tempMetlId: 2

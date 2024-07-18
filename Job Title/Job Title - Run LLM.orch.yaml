@@ -14,12 +14,13 @@ pipeline:
       parameters:
         componentName: "OpenAI Prompt"
         openAI:
-          model: "gpt-4"
+          model: "[Custom]"
           apiKey: "OpenAI-Key"
           temperature: "1"
           topP: "1"
           "n": "1"
           maxTokens:
+          userProvidedModel:
         source:
           snowflake:
             database: "[Environment Default]"

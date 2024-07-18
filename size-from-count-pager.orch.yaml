@@ -1,0 +1,49 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "size-from-count-pager"
+      parameters:
+        componentName: "Start"
+    size-from-count-pager:
+      type: "modular-api-extract-input-v1"
+      parameters:
+        componentName: "size-from-count-pager"
+        inputId: "api-extract-input-v1"
+        api-extract-input-v1:
+          profile: "custom-11b2618c-7a5d-4451-8fa8-7527ebfe15a4"
+          endpoint: "api"
+          connectionRef:
+            authType: "NONE"
+          uriParams:
+          queryParams:
+          headerParams:
+          postBody:
+          pageLimit:
+          logLevel: "ERROR"
+        outputId: "snowflake-output-connector-v0"
+        snowflake-output-connector-v0:
+          warehouse: "[Environment Default]"
+          database: "[Environment Default]"
+          schema: "[Environment Default]"
+          tableName: "tmp_pager"
+          createTableMode: "REPLACE_IF_EXISTS"
+          cleanStagedFiles: "Yes"
+          stagePlatform: "SNOWFLAKE"
+          snowflake#internalStageType: "USER"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    size-from-count-pager:
+      position:
+        x: 180
+        "y": 0
+      tempMetlId: 2

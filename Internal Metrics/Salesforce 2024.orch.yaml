@@ -1,0 +1,127 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Salesforce Query"
+      parameters:
+        componentName: "Start"
+    Salesforce Query:
+      type: "salesforce-query"
+      parameters:
+        componentName: "Salesforce Query"
+        basicAdvancedMode: "Advanced"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "Salesforce-2024"
+        connectionOptions:
+        sqlQuery: "SELECT Id, Name, Customer_Group_KPI_Customer_Date__c, Customer_Group_KPI_Churn_Date__c\r\
+          \nFROM Account\r\nWHERE Customer_Group_KPI_Customer_Date__c IS NOT NULL\r\
+          \nOR    Customer_Group_KPI_Churn_Date__c IS NOT NULL\r\nOR    \"Type\" =\
+          \ 'Customer'"
+        type: "Standard"
+        primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "tmp_acc"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Query 2:
+      type: "salesforce-query"
+      parameters:
+        componentName: "Salesforce Query 2"
+        basicAdvancedMode: "Advanced"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "Salesforce-2024"
+        connectionOptions:
+        sqlQuery: "SELECT * FROM Account WHERE \"Type\" = 'Customer'"
+        type: "Standard"
+        primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "tmp_sf"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Query 3:
+      type: "salesforce-query"
+      parameters:
+        componentName: "Salesforce Query 3"
+        basicAdvancedMode: "Advanced"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "Salesforce-2024"
+        connectionOptions:
+        sqlQuery: "SELECT o.*\r\nFROM Account a\r\nJOIN Opportunity o ON o.AccountId\
+          \ = a.Id\r\nWHERE a.\"Type\" = 'Customer'"
+        type: "Standard"
+        primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "tmp_opp"
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+        autoDebug: "Off"
+    Salesforce Query 4:
+      type: "salesforce-query"
+      parameters:
+        componentName: "Salesforce Query 4"
+        basicAdvancedMode: "Basic"
+        authenticationMethod: "OAuth"
+        useSandbox: "No"
+        authentication: "Salesforce-2024"
+        connectionOptions:
+        dataSource: "RecordType"
+        dataSelection:
+        - "LastModifiedDate"
+        dataSourceFilter:
+        combineFilters: "And"
+        limit: "100"
+        type: "Standard"
+        primaryKeys:
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable:
+        stage: "[Custom]"
+        stagePlatform: "Snowflake Managed"
+        loadOptions:
+        autoDebug: "Off"
+design:
+  components:
+    Start:
+      position:
+        x: -1120
+        "y": -140
+      tempMetlId: 1
+    Salesforce Query:
+      position:
+        x: -870
+        "y": -140
+      tempMetlId: 2
+    Salesforce Query 2:
+      position:
+        x: -890
+        "y": -20
+      tempMetlId: 3
+    Salesforce Query 3:
+      position:
+        x: -870
+        "y": -250
+      tempMetlId: 4
+    Salesforce Query 4:
+      position:
+        x: -870
+        "y": -350
+      tempMetlId: 5

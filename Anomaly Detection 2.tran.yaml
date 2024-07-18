@@ -1,0 +1,94 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    Anomaly detection using a trained ML algorithm:
+      type: "sql"
+      parameters:
+        componentName: "Anomaly detection using a trained ML algorithm"
+        query: "-- SELECT \"ts\", \"forecast\", \"value\" FROM TABLE(ml_norm!DETECT_ANOMALIES(...));\r\
+          \nSELECT 1 AS x, False as \"IsOutlier\""
+    Is Anomaly:
+      type: "filter"
+      sources:
+      - "Anomaly detection using a trained ML algorithm"
+      parameters:
+        componentName: "Is Anomaly"
+        filterConditions:
+        - - "IsOutlier"
+          - "Is"
+          - "Equal to"
+          - "True"
+        combineCondition: "And"
+    Not Anomaly:
+      type: "filter"
+      sources:
+      - "Anomaly detection using a trained ML algorithm"
+      parameters:
+        componentName: "Not Anomaly"
+        filterConditions:
+        - - "IsOutlier"
+          - "Not"
+          - "Equal to"
+          - "True"
+        combineCondition: "And"
+    Save for further processing:
+      type: "rewrite-table"
+      sources:
+      - "Not Anomaly"
+      parameters:
+        componentName: "Save for further processing"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "x"
+        orderBy:
+    Log outliers:
+      type: "rewrite-table"
+      sources:
+      - "Is Anomaly"
+      parameters:
+        componentName: "Log outliers"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "x"
+        orderBy:
+design:
+  components:
+    Anomaly detection using a trained ML algorithm:
+      position:
+        x: -10
+        "y": -30
+      tempMetlId: 1
+    Is Anomaly:
+      position:
+        x: 270
+        "y": -110
+      tempMetlId: 2
+    Not Anomaly:
+      position:
+        x: 270
+        "y": 40
+      tempMetlId: 3
+    Save for further processing:
+      position:
+        x: 400
+        "y": 40
+      tempMetlId: 4
+    Log outliers:
+      position:
+        x: 400
+        "y": -110
+      tempMetlId: 5
+  notes:
+    "1":
+      position:
+        x: -30
+        "y": -220
+      size:
+        height: 88
+        width: 440
+      theme: "light-green"
+      content: "Any records flagged as anomalous by the ML algorithm will be logged\
+        \ as an outlier and not processed further"

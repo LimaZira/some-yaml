@@ -1,0 +1,29 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "SQL Script"
+      parameters:
+        componentName: "Start"
+    SQL Script:
+      type: "sql-script"
+      parameters:
+        componentName: "SQL Script"
+        sqlScript: "CREATE OR REPLACE TABLE tdl_e\r\nAS SELECT * FROM tdl_c UNION\
+          \ SELECT * FROM tdl_d;"
+design:
+  components:
+    Start:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    SQL Script:
+      position:
+        x: 160
+        "y": 0
+      tempMetlId: 2

@@ -1,0 +1,68 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    TDL_A:
+      type: "table-input"
+      parameters:
+        componentName: "TDL_A"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "TDL_A"
+        columnNames:
+        - "COL1"
+        timeOffset:
+    TDL_B:
+      type: "table-input"
+      parameters:
+        componentName: "TDL_B"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "TDL_B"
+        columnNames:
+        - "COL1"
+        timeOffset:
+    Unite:
+      type: "unite"
+      sources:
+      - "TDL_A"
+      - "TDL_B"
+      parameters:
+        componentName: "Unite"
+        method: "All Columns"
+        castTypes: "Yes"
+        addSourceComponentColumn: "No"
+        removeDuplicates: "Yes"
+    Rewrite Table:
+      type: "rewrite-table"
+      sources:
+      - "Unite"
+      parameters:
+        componentName: "Rewrite Table"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "TDL_C"
+        orderBy:
+design:
+  components:
+    TDL_A:
+      position:
+        x: 0
+        "y": 0
+      tempMetlId: 1
+    TDL_B:
+      position:
+        x: 0
+        "y": 130
+      tempMetlId: 2
+    Unite:
+      position:
+        x: 180
+        "y": 60
+      tempMetlId: 3
+    Rewrite Table:
+      position:
+        x: 300
+        "y": 60
+      tempMetlId: 4
